@@ -1,6 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
+:root {
+  --color-primary-50: #f9fafb;
+  --color-primary-100: #f3f4f6;
+  --color-primary-200: #e5e7eb;
+  --color-primary-300: #d1d5db;
+  --color-primary-400: #9ca3af;
+  --color-primary-500: #374151;
+  --color-primary-600: #1f2937;
+  --color-primary-700: #111827;
+  --color-primary-800: #0f172a;
+  --color-primary-900: #020617;
+}
+
 @layer base {
   html {
     font-family: "Inter", system-ui, sans-serif;
@@ -15,4 +28,40 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Force primary colors */
+  .bg-primary-500 {
+    background-color: #374151 !important;
+  }
+  .bg-primary-600 {
+    background-color: #1f2937 !important;
+  }
+  .bg-primary-700 {
+    background-color: #111827 !important;
+  }
+  .text-primary-600 {
+    color: #1f2937 !important;
+  }
+  .text-primary-800 {
+    color: #0f172a !important;
+  }
+  .border-primary-500 {
+    border-color: #374151 !important;
+  }
+  .hover\:bg-primary-600:hover {
+    background-color: #1f2937 !important;
+  }
+  .hover\:bg-primary-700:hover {
+    background-color: #111827 !important;
+  }
+  .focus\:ring-primary-500:focus {
+    --tw-ring-color: #374151 !important;
+  }
+  .focus\:border-primary-500:focus {
+    border-color: #374151 !important;
+  }
 }
+
+body { height: 100%; overflow: auto; }
+html { height: 100%; }
+* { box-sizing: border-box; }

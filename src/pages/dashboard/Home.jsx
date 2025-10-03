@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ShoppingBagIcon,
   ClipboardDocumentListIcon,
@@ -7,7 +7,7 @@ import {
   UserGroupIcon,
   ArrowUpIcon,
   ArrowDownIcon,
-} from '@heroicons/react/24/outline'
+} from "@heroicons/react/24/outline";
 import {
   LineChart,
   Line,
@@ -18,17 +18,22 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-} from 'recharts'
-import { setOverview, setSalesData, setTopProducts, setRecentActivity } from '../../store/slices/analyticsSlice'
-import { mockAnalytics } from '../../data/mockData'
-import Card from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import Breadcrumbs from '../../components/layout/Breadcrumbs'
-import { formatCurrency, formatDate } from '../../utils/helpers'
+} from "recharts";
+import {
+  setOverview,
+  setSalesData,
+  setTopProducts,
+  setRecentActivity,
+} from "../../store/slices/analyticsSlice";
+import { mockAnalytics } from "../../data/orderMockData";
+import Card from "../../components/ui/Card";
+import Badge from "../../components/ui/Badge";
+import Breadcrumbs from "../../components/layout/Breadcrumbs";
+import { formatCurrency, formatDate } from "../../utils/helpers";
 
 const StatCard = ({ title, value, change, changeType, icon: Icon }) => {
-  const isPositive = changeType === 'positive'
-  
+  const isPositive = changeType === "positive";
+
   return (
     <Card>
       <Card.Content className="p-6">
@@ -38,19 +43,27 @@ const StatCard = ({ title, value, change, changeType, icon: Icon }) => {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
+              <dt className="text-sm font-medium text-gray-500 truncate">
+                {title}
+              </dt>
               <dd className="flex items-baseline">
-                <div className="text-2xl font-semibold text-gray-900">{value}</div>
+                <div className="text-2xl font-semibold text-gray-900">
+                  {value}
+                </div>
                 {change && (
-                  <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                    isPositive ? 'text-green-600' : 'text-red-600'
-                  }`}>
+                  <div
+                    className={`ml-2 flex items-baseline text-sm font-semibold ${
+                      isPositive ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
                     {isPositive ? (
                       <ArrowUpIcon className="self-center flex-shrink-0 h-4 w-4" />
                     ) : (
                       <ArrowDownIcon className="self-center flex-shrink-0 h-4 w-4" />
                     )}
-                    <span className="sr-only">{isPositive ? 'Increased' : 'Decreased'} by</span>
+                    <span className="sr-only">
+                      {isPositive ? "Increased" : "Decreased"} by
+                    </span>
                     {change}
                   </div>
                 )}
@@ -60,58 +73,60 @@ const StatCard = ({ title, value, change, changeType, icon: Icon }) => {
         </div>
       </Card.Content>
     </Card>
-  )
-}
+  );
+};
 
 const Home = () => {
-  const dispatch = useDispatch()
-  const { overview, salesData, topProducts, recentActivity } = useSelector((state) => state.analytics)
+  const dispatch = useDispatch();
+  const { overview, salesData, topProducts, recentActivity } = useSelector(
+    (state) => state.analytics
+  );
 
   useEffect(() => {
     // Load mock data
-    dispatch(setOverview(mockAnalytics.overview))
-    dispatch(setSalesData(mockAnalytics.salesData))
-    dispatch(setTopProducts(mockAnalytics.topProducts))
-    dispatch(setRecentActivity(mockAnalytics.recentActivity))
-  }, [dispatch])
+    dispatch(setOverview(mockAnalytics.overview));
+    dispatch(setSalesData(mockAnalytics.salesData));
+    dispatch(setTopProducts(mockAnalytics.topProducts));
+    dispatch(setRecentActivity(mockAnalytics.recentActivity));
+  }, [dispatch]);
 
-  const breadcrumbItems = [{ name: 'Dashboard' }]
+  const breadcrumbItems = [{ name: "Dashboard" }];
 
   const stats = [
     {
-      title: 'Total Sales',
+      title: "Total Sales",
       value: formatCurrency(overview.totalSales),
-      change: '+12.5%',
-      changeType: 'positive',
+      change: "+12.5%",
+      changeType: "positive",
       icon: CurrencyDollarIcon,
     },
     {
-      title: 'Total Orders',
+      title: "Total Orders",
       value: overview.totalOrders?.toLocaleString(),
-      change: '+8.2%',
-      changeType: 'positive',
+      change: "+8.2%",
+      changeType: "positive",
       icon: ClipboardDocumentListIcon,
     },
     {
-      title: 'Average Order Value',
+      title: "Average Order Value",
       value: formatCurrency(overview.averageOrderValue),
-      change: '+4.1%',
-      changeType: 'positive',
+      change: "+4.1%",
+      changeType: "positive",
       icon: ShoppingBagIcon,
     },
     {
-      title: 'Total Customers',
+      title: "Total Customers",
       value: overview.totalCustomers?.toLocaleString(),
-      change: '+15.3%',
-      changeType: 'positive',
+      change: "+15.3%",
+      changeType: "positive",
       icon: UserGroupIcon,
     },
-  ]
+  ];
 
   return (
     <div>
       <Breadcrumbs items={breadcrumbItems} />
-      
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
         <p className="mt-1 text-sm text-gray-600">
@@ -130,7 +145,9 @@ const Home = () => {
         {/* Sales Chart */}
         <Card>
           <Card.Header>
-            <h3 className="text-lg font-medium text-gray-900">Sales Overview</h3>
+            <h3 className="text-lg font-medium text-gray-900">
+              Sales Overview
+            </h3>
             <p className="text-sm text-gray-500">Last 7 days</p>
           </Card.Header>
           <Card.Content>
@@ -138,21 +155,21 @@ const Home = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={salesData}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     tickFormatter={(value) => formatDate(value)}
                   />
                   <YAxis tickFormatter={(value) => `$${value}`} />
-                  <Tooltip 
+                  <Tooltip
                     labelFormatter={(value) => formatDate(value)}
-                    formatter={(value) => [formatCurrency(value), 'Sales']}
+                    formatter={(value) => [formatCurrency(value), "Sales"]}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="sales" 
-                    stroke="#0743ba" 
+                  <Line
+                    type="monotone"
+                    dataKey="sales"
+                    stroke="#0743ba"
                     strokeWidth={2}
-                    dot={{ fill: '#0743ba' }}
+                    dot={{ fill: "#0743ba" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -173,7 +190,9 @@ const Home = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" tickFormatter={(value) => `$${value}`} />
                   <YAxis dataKey="name" type="category" width={120} />
-                  <Tooltip formatter={(value) => [formatCurrency(value), 'Sales']} />
+                  <Tooltip
+                    formatter={(value) => [formatCurrency(value), "Sales"]}
+                  />
                   <Bar dataKey="sales" fill="#0743ba" />
                 </BarChart>
               </ResponsiveContainer>
@@ -207,7 +226,9 @@ const Home = () => {
                       </div>
                       <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                         <div>
-                          <p className="text-sm text-gray-500">{activity.message}</p>
+                          <p className="text-sm text-gray-500">
+                            {activity.message}
+                          </p>
                         </div>
                         <div className="text-right text-sm whitespace-nowrap text-gray-500">
                           {formatDate(activity.timestamp)}
@@ -222,7 +243,7 @@ const Home = () => {
         </Card.Content>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

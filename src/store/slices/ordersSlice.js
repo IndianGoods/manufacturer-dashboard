@@ -8,8 +8,6 @@ const initialState = {
   filters: {
     search: '',
     status: 'all',
-    fulfillment: 'all',
-    dateRange: 'all',
   },
   selectedOrder: null,
 }
@@ -47,24 +45,34 @@ const ordersSlice = createSlice({
       state.filters = { ...state.filters, ...action.payload }
     },
     applyFilters: (state) => {
-      let filtered = state.items
+      let filtered = [...state.items];
 
+      // Filter by search
       if (state.filters.search) {
-        filtered = filtered.filter(item =>
-          item.orderNumber.toLowerCase().includes(state.filters.search.toLowerCase()) ||
-          item.customer.name.toLowerCase().includes(state.filters.search.toLowerCase())
-        )
+        const searchLower = state.filters.search.toLowerCase();
+        filtered = filtered.filter(order =>
+          order.orderNumber.toLowerCase().includes(searchLower) ||
+          order.customer.name.toLowerCase().includes(searchLower) ||
+          order.customer.email.toLowerCase().includes(searchLower)
+        );
       }
 
+      // Filter by status
       if (state.filters.status !== 'all') {
-        filtered = filtered.filter(item => item.status === state.filters.status)
+        if (state.filters.status === 'unfulfilled') {
+          filtered = filtered.filter(order => order.fulfillmentStatus === 'unfulfilled');
+        } else if (state.filters.status === 'unpaid') {
+          filtered = filtered.filter(order => order.paymentStatus === 'unpaid');
+        } else if (state.filters.status === 'open') {
+          filtered = filtered.filter(order => order.status === 'pending' || order.fulfillmentStatus === 'unfulfilled');
+        } else if (state.filters.status === 'archived') {
+          filtered = filtered.filter(order => order.status === 'archived');
+        } else {
+          filtered = filtered.filter(order => order.status === state.filters.status);
+        }
       }
 
-      if (state.filters.fulfillment !== 'all') {
-        filtered = filtered.filter(item => item.fulfillmentStatus === state.filters.fulfillment)
-      }
-
-      state.filteredItems = filtered
+      state.filteredItems = filtered;
     },
     setLoading: (state, action) => {
       state.isLoading = action.payload
