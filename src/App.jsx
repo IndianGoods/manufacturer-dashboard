@@ -7,6 +7,10 @@ import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Home from './pages/dashboard/Home'
 import Products from './pages/dashboard/Products'
+import Inventory from './pages/dashboard/Inventory'
+import ProductDetail from './pages/dashboard/ProductDetail'
+import Orders from './pages/dashboard/orders/Orders'
+import OrderDetailPage from './pages/dashboard/orders/OrderDetailPage'
 
 function App() {
   return (
@@ -28,13 +32,17 @@ function App() {
           >
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
-            <Route path="products/inventory" element={<div>Inventory Page</div>} />
-            <Route path="orders" element={<div>Orders Page</div>} />
+            <Route path="products/:id" element={<ProductDetail />} />
+            <Route path="inventory" element={<Inventory />} />
+            <Route path="products/inventory" element={<Inventory />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="orders/:id" element={<OrderDetailPage />} />
             <Route path="rfqs" element={<div>RFQs Page</div>} />
             <Route path="discounts" element={<div>Discounts Page</div>} />
             <Route path="analytics" element={<div>Analytics Page</div>} />
             <Route path="support" element={<div>Support Page</div>} />
             <Route path="settings" element={<div>Settings Page</div>} />
+
           </Route>
           
           {/* Redirect root to dashboard */}

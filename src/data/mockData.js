@@ -9,11 +9,69 @@ export const mockProducts = [
     status: 'active',
     category: 'Electronics',
     inventory: 45,
-    images: ['/api/placeholder/300/300'],
+    images: ['/api/placeholder/300/300https://images.unsplash.com/photo-1612858249937-1cc0852093dd?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
     description: 'High-quality wireless headphones with noise cancellation',
     variants: [
-      { id: '1a', name: 'Black', price: 299.99, inventory: 25 },
-      { id: '1b', name: 'White', price: 299.99, inventory: 20 },
+      { 
+        id: '1a', 
+        name: 'Black', 
+        color: '#000000',
+        price: 299.99, 
+        compareAtPrice: 399.99,
+        inventory: {
+          available: 25,
+          committed: 5,
+          onHand: 30,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'PWH-001-BLK',
+        barcode: '123456789012',
+        weight: 0.5,
+        image: 'https://images.unsplash.com/photo-1612858249937-1cc0852093dd?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.5,
+          countryOfOrigin: 'China',
+          hsCode: '8518.30.00',
+          packaging: 'Standard Box'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
+      { 
+        id: '1b', 
+        name: 'White', 
+        color: '#FFFFFF',
+        price: 299.99, 
+        compareAtPrice: 399.99,
+        inventory: {
+          available: 20,
+          committed: 3,
+          onHand: 23,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'PWH-001-WHT',
+        barcode: '123456789013',
+        weight: 0.5,
+        image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?q=80&w=1326&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.5,
+          countryOfOrigin: 'China',
+          hsCode: '8518.30.00',
+          packaging: 'Standard Box'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
     ],
     createdAt: '2024-09-15T10:00:00Z',
     updatedAt: '2024-09-20T15:30:00Z',
@@ -27,11 +85,69 @@ export const mockProducts = [
     status: 'active',
     category: 'Electronics',
     inventory: 32,
-    images: ['/api/placeholder/300/300'],
+    images: ['https://images.unsplash.com/photo-1637160151663-a410315e4e75?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
     description: 'Advanced smartwatch with health monitoring',
     variants: [
-      { id: '2a', name: '42mm', price: 249.99, inventory: 15 },
-      { id: '2b', name: '46mm', price: 279.99, inventory: 17 },
+      { 
+        id: '2a', 
+        name: '42mm', 
+        color: '#1F2937',
+        price: 249.99, 
+        compareAtPrice: null,
+        inventory: {
+          available: 15,
+          committed: 2,
+          onHand: 17,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'SWS-005-42',
+        barcode: '234567890123',
+        weight: 0.3,
+        image: 'https://images.unsplash.com/photo-1637160151663-a410315e4e75?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.3,
+          countryOfOrigin: 'South Korea',
+          hsCode: '9102.11.00',
+          packaging: 'Premium Box'
+        },
+        sellWhenOutOfStock: true,
+        taxable: true
+      },
+      { 
+        id: '2b', 
+        name: '46mm', 
+        color: '#1F2937',
+        price: 279.99, 
+        compareAtPrice: null,
+        inventory: {
+          available: 17,
+          committed: 4,
+          onHand: 21,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'SWS-005-46',
+        barcode: '234567890124',
+        weight: 0.35,
+        image: 'https://images.unsplash.com/photo-1551816230-ef5deaed4a26?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.35,
+          countryOfOrigin: 'South Korea',
+          hsCode: '9102.11.00',
+          packaging: 'Premium Box'
+        },
+        sellWhenOutOfStock: true,
+        taxable: true
+      },
     ],
     createdAt: '2024-09-10T08:15:00Z',
     updatedAt: '2024-09-25T12:20:00Z',
@@ -45,13 +161,129 @@ export const mockProducts = [
     status: 'active',
     category: 'Clothing',
     inventory: 120,
-    images: ['/api/placeholder/300/300'],
+    images: ['https://images.unsplash.com/photo-1551304110-1487f449c468?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
     description: 'Comfortable organic cotton t-shirt',
     variants: [
-      { id: '3a', name: 'Small', price: 29.99, inventory: 30 },
-      { id: '3b', name: 'Medium', price: 29.99, inventory: 40 },
-      { id: '3c', name: 'Large', price: 29.99, inventory: 35 },
-      { id: '3d', name: 'XL', price: 29.99, inventory: 15 },
+      { 
+        id: '3a', 
+        name: 'Small', 
+        color: '#EF4444',
+        price: 29.99, 
+        compareAtPrice: 39.99,
+        inventory: {
+          available: 30,
+          committed: 5,
+          onHand: 35,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'OCT-101-S',
+        barcode: '345678901234',
+        weight: 0.2,
+        image: 'https://images.unsplash.com/photo-1551304110-1487f449c468?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.2,
+          countryOfOrigin: 'India',
+          hsCode: '6109.10.00',
+          packaging: 'Poly Bag'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
+      { 
+        id: '3b', 
+        name: 'Medium', 
+        color: '#3B82F6',
+        price: 29.99, 
+        compareAtPrice: 39.99,
+        inventory: {
+          available: 40,
+          committed: 8,
+          onHand: 48,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'OCT-101-M',
+        barcode: '345678901235',
+        weight: 0.22,
+        image: 'https://images.unsplash.com/photo-1677709678785-bbe8227262cf?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.22,
+          countryOfOrigin: 'India',
+          hsCode: '6109.10.00',
+          packaging: 'Poly Bag'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
+      { 
+        id: '3c', 
+        name: 'Large', 
+        color: '#10B981',
+        price: 29.99, 
+        compareAtPrice: 39.99,
+        inventory: {
+          available: 35,
+          committed: 10,
+          onHand: 45,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'OCT-101-L',
+        barcode: '345678901236',
+        weight: 0.24,
+        image: 'https://images.unsplash.com/photo-1664559779635-2d311613787e?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.24,
+          countryOfOrigin: 'India',
+          hsCode: '6109.10.00',
+          packaging: 'Poly Bag'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
+      { 
+        id: '3d', 
+        name: 'XL', 
+        color: '#8B5CF6',
+        price: 29.99, 
+        compareAtPrice: 39.99,
+        inventory: {
+          available: 15,
+          committed: 3,
+          onHand: 18,
+          unavailable: {
+            damaged: 0,
+            qualityControl: 0,
+            safetyStock: 0,
+            other: 0
+          }
+        },
+        sku: 'OCT-101-XL',
+        barcode: '345678901237',
+        weight: 0.26,
+        image: 'https://images.unsplash.com/photo-1584014692701-25723252453f?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+        shipping: {
+          weight: 0.26,
+          countryOfOrigin: 'India',
+          hsCode: '6109.10.00',
+          packaging: 'Poly Bag'
+        },
+        sellWhenOutOfStock: false,
+        taxable: true
+      },
     ],
     createdAt: '2024-09-05T14:30:00Z',
     updatedAt: '2024-09-18T09:45:00Z',
@@ -65,7 +297,7 @@ export const mockProducts = [
     status: 'draft',
     category: 'Photography',
     inventory: 8,
-    images: ['/api/placeholder/300/300'],
+    images: ['https://images.unsplash.com/photo-1582994254571-52c62d96ebab?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
     description: '85mm f/1.4 professional portrait lens',
     variants: [],
     createdAt: '2024-09-20T16:00:00Z',
@@ -83,13 +315,14 @@ export const mockOrders = [
       email: 'john.smith@email.com',
       phone: '+1 (555) 123-4567',
     },
-    status: 'fulfilled',
-    fulfillmentStatus: 'shipped',
-    paymentStatus: 'paid',
+    status: 'pending',
+    fulfillmentStatus: 'unfulfilled',
+    paymentStatus: 'unpaid',
     total: 329.98,
     subtotal: 299.98,
     tax: 24.00,
     shipping: 6.00,
+    discount: 0,
     items: [
       {
         id: 'item-1',
@@ -127,6 +360,7 @@ export const mockOrders = [
     subtotal: 249.99,
     tax: 20.00,
     shipping: 10.00,
+    discount: 5.00,
     items: [
       {
         id: 'item-2',
@@ -148,6 +382,105 @@ export const mockOrders = [
     },
     createdAt: '2024-09-26T15:45:00Z',
     updatedAt: '2024-09-26T15:45:00Z',
+  },
+  {
+    id: 'ord-3',
+    orderNumber: '#1003',
+    customer: {
+      name: 'Mike Chen',
+      email: 'mike.chen@email.com',
+      phone: '+1 (555) 456-7890',
+    },
+    status: 'shipped',
+    fulfillmentStatus: 'fulfilled',
+    paymentStatus: 'paid',
+    total: 149.97,
+    subtotal: 119.97,
+    tax: 19.60,
+    shipping: 10.40,
+    discount: 0,
+    tracking: {
+      trackingNumber: 'FX123456789',
+      carrier: 'FedEx',
+      status: 'in_transit',
+      estimatedDelivery: '2024-10-05',
+      trackingUrl: 'https://fedex.com/track/FX123456789'
+    },
+    items: [
+      {
+        id: 'item-3',
+        productId: '3',
+        name: 'Organic Cotton T-Shirt',
+        variant: 'Medium',
+        quantity: 2,
+        price: 29.99,
+      },
+      {
+        id: 'item-4',
+        productId: '3',
+        name: 'Organic Cotton T-Shirt',
+        variant: 'Large',
+        quantity: 2,
+        price: 29.99,
+      },
+    ],
+    shippingAddress: {
+      name: 'Mike Chen',
+      address1: '789 Pine Street',
+      address2: 'Unit 12',
+      city: 'Seattle',
+      state: 'WA',
+      zip: '98101',
+      country: 'United States',
+    },
+    createdAt: '2024-09-24T11:20:00Z',
+    updatedAt: '2024-09-27T09:30:00Z',
+  },
+  {
+    id: 'ord-4',
+    orderNumber: '#1004',
+    customer: {
+      name: 'Emily Davis',
+      email: 'emily.davis@email.com',
+      phone: '+1 (555) 321-9876',
+    },
+    status: 'delivered',
+    fulfillmentStatus: 'fulfilled',
+    paymentStatus: 'paid',
+    total: 949.99,
+    subtotal: 899.99,
+    tax: 40.00,
+    shipping: 10.00,
+    discount: 0,
+    tracking: {
+      trackingNumber: 'UP987654321',
+      carrier: 'UPS',
+      status: 'delivered',
+      estimatedDelivery: '2024-10-01',
+      deliveredAt: '2024-10-01T16:30:00Z',
+      trackingUrl: 'https://ups.com/track/UP987654321'
+    },
+    items: [
+      {
+        id: 'item-5',
+        productId: '4',
+        name: 'Professional Camera Lens',
+        variant: '85mm',
+        quantity: 1,
+        price: 899.99,
+      },
+    ],
+    shippingAddress: {
+      name: 'Emily Davis',
+      address1: '456 Photography Ave',
+      address2: 'Studio 3',
+      city: 'Austin',
+      state: 'TX',
+      zip: '78701',
+      country: 'United States',
+    },
+    createdAt: '2024-09-22T14:15:00Z',
+    updatedAt: '2024-10-01T16:30:00Z',
   },
 ]
 
@@ -314,7 +647,7 @@ export const mockUser = {
   id: 'user-1',
   name: 'Alex Thompson',
   email: 'alex@company.com',
-  avatar: '/api/placeholder/40/40',
+  avatar: 'https://images.unsplash.com/photo-1615109398623-88346a601842?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   role: 'admin',
   company: 'My Dashboard Store',
   permissions: ['all'],
