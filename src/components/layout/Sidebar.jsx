@@ -12,6 +12,7 @@ import {
   Cog6ToothIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  ArchiveBoxIcon,
 } from '@heroicons/react/24/outline'
 import { logout } from '../../store/slices/authSlice'
 import { cn } from '../../utils/helpers'
@@ -27,6 +28,7 @@ const navigationItems = [
       { name: 'Inventory', href: '/dashboard/products/inventory' },
     ],
   },
+  // { name: 'Inventory', href: '/dashboard/inventory', icon: ArchiveBoxIcon },
   { name: 'Orders', href: '/dashboard/orders', icon: ClipboardDocumentListIcon },
   { name: 'RFQs', href: '/dashboard/rfqs', icon: DocumentTextIcon },
   { name: 'Discounts', href: '/dashboard/discounts', icon: TagIcon },
