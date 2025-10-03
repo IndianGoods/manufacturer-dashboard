@@ -7,9 +7,13 @@ import Login from './pages/auth/Login'
 import Register from './pages/auth/Register'
 import Home from './pages/dashboard/Home'
 import Products from './pages/dashboard/Products'
+import ProductsDemo from './pages/dashboard/ProductsDemo'
+import CreateProduct from './pages/dashboard/CreateProduct'
+import EditProduct from './pages/dashboard/EditProduct'
+import BulkEditProducts from './pages/dashboard/BulkEditProducts'
+import Orders from './pages/dashboard/Orders'
 import Inventory from './pages/dashboard/Inventory'
 import ProductDetail from './pages/dashboard/ProductDetail'
-import Orders from './pages/dashboard/orders/Orders'
 import OrderDetailPage from './pages/dashboard/orders/OrderDetailPage'
 
 function App() {
@@ -32,8 +36,10 @@ function App() {
           >
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
+            <Route path="products/new" element={<CreateProduct />} />
+            <Route path="products/:id/edit" element={<EditProduct />} />
+            <Route path="products/bulk-edit" element={<BulkEditProducts />} />
             <Route path="products/:id" element={<ProductDetail />} />
-            <Route path="inventory" element={<Inventory />} />
             <Route path="products/inventory" element={<Inventory />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
@@ -44,8 +50,6 @@ function App() {
             <Route path="settings" element={<div>Settings Page</div>} />
 
           </Route>
-          
-          {/* Redirect root to dashboard */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>

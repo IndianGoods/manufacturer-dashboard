@@ -2,7 +2,7 @@ import { cn } from '../../utils/helpers'
 
 const Table = ({ children, className = '' }) => {
   return (
-    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+    <div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className={cn('min-w-full divide-y divide-gray-300', className)}>
         {children}
       </table>

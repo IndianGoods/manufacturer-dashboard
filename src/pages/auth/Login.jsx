@@ -1,23 +1,23 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { loginSuccess } from '../../store/slices/authSlice'
-import { mockUser } from '../../data/mockData'
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { loginSuccess } from "../../store/slices/authSlice";
+import { mockUser } from "../../data/orderMockData";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-})
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 const Login = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -26,22 +26,25 @@ const Login = () => {
     setError,
   } = useForm({
     resolver: zodResolver(loginSchema),
-  })
+  });
 
   const onSubmit = async (data) => {
-    setIsLoading(true)
-    
+    setIsLoading(true);
+
     // Simulate API call
     setTimeout(() => {
-      if (data.email === 'admin@dashboard.com' && data.password === 'password') {
-        dispatch(loginSuccess(mockUser))
-        navigate('/dashboard')
+      if (
+        data.email === "admin@dashboard.com" &&
+        data.password === "password"
+      ) {
+        dispatch(loginSuccess(mockUser));
+        navigate("/dashboard");
       } else {
-        setError('root', { message: 'Invalid email or password' })
+        setError("root", { message: "Invalid email or password" });
       }
-      setIsLoading(false)
-    }, 1000)
-  }
+      setIsLoading(false);
+    }, 1000);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -67,7 +70,7 @@ const Login = () => {
               type="email"
               autoComplete="email"
               error={errors.email?.message}
-              {...register('email')}
+              {...register("email")}
             />
 
             <Input
@@ -75,7 +78,7 @@ const Login = () => {
               type="password"
               autoComplete="current-password"
               error={errors.password?.message}
-              {...register('password')}
+              {...register("password")}
             />
 
             <div className="flex items-center justify-between">
@@ -86,7 +89,10 @@ const Login = () => {
                   type="checkbox"
                   className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900"
+                >
                   Remember me
                 </label>
               </div>
@@ -105,12 +111,8 @@ const Login = () => {
               <div className="text-sm text-red-600">{errors.root.message}</div>
             )}
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
@@ -120,7 +122,9 @@ const Login = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
+                <span className="px-2 bg-white text-gray-500">
+                  Don't have an account?
+                </span>
               </div>
             </div>
 
@@ -136,7 +140,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
