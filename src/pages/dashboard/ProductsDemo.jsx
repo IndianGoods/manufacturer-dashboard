@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
   ArrowsUpDownIcon,
+  EllipsisVerticalIcon,
   PlusIcon,
   ArrowDownTrayIcon,
   ArrowUpTrayIcon,
   ChevronDownIcon,
-  XMarkIcon,
+  TrashIcon,
+  PencilIcon,
+  DocumentDuplicateIcon,
+  EyeIcon,
 } from "@heroicons/react/24/outline";
 import {
   setProducts,
@@ -25,13 +28,12 @@ import Input from "../../components/ui/Input";
 import Badge from "../../components/ui/Badge";
 import Table from "../../components/ui/Table";
 import Card from "../../components/ui/Card";
-
+import Dropdown from "../../components/ui/Dropdown";
 import Modal from "../../components/ui/Modal";
 import { formatCurrency, formatDate } from "../../utils/helpers";
 
-const Products = () => {
+const ProductsDemo = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { items, filteredItems, filters } = useSelector(
     (state) => state.products
   );
@@ -40,38 +42,49 @@ const Products = () => {
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [showImportModal, setShowImportModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [showEmptyState, setShowEmptyState] = useState(false);
 
   useEffect(() => {
     // Load mock products on component mount
-    dispatch(setProducts(mockProducts));
-  }, [dispatch]);
+    if (!showEmptyState) {
+      dispatch(setProducts(mockProducts));
+    } else {
+      dispatch(setProducts([]));
+    }
+  }, [dispatch, showEmptyState]);
 
   useEffect(() => {
     // Apply filters whenever filters change
     dispatch(applyFilters());
   }, [filters, dispatch]);
 
-  const breadcrumbItems = [{ name: "Products" }];
+  const breadcrumbItems = [{ name: "Products Demo" }];
+
+  const currentItems = showEmptyState ? [] : filteredItems;
 
   const tabs = [
-    { id: "all", name: "All", count: items.length },
+    { id: "all", name: "All", count: showEmptyState ? 0 : items.length },
     {
       id: "active",
       name: "Active",
-      count: items.filter((p) => p.status === "active").length,
+      count: showEmptyState
+        ? 0
+        : items.filter((p) => p.status === "active").length,
     },
     {
       id: "draft",
       name: "Draft",
-      count: items.filter((p) => p.status === "draft").length,
+      count: showEmptyState
+        ? 0
+        : items.filter((p) => p.status === "draft").length,
     },
     {
       id: "archived",
       name: "Archived",
-      count: items.filter((p) => p.status === "archived").length,
+      count: showEmptyState
+        ? 0
+        : items.filter((p) => p.status === "archived").length,
     },
   ];
 
@@ -115,32 +128,12 @@ const Products = () => {
       : [option, "asc"];
     setSortBy(field);
     setSortOrder(order);
-
-    // Sort the products
-    const sorted = [...filteredItems].sort((a, b) => {
-      let aVal = a[field];
-      let bVal = b[field];
-
-      if (field === "name") {
-        aVal = a.name.toLowerCase();
-        bVal = b.name.toLowerCase();
-      } else if (field === "created" || field === "updated") {
-        aVal = new Date(a[field]);
-        bVal = new Date(b[field]);
-      }
-
-      if (order === "desc") {
-        return bVal > aVal ? 1 : -1;
-      }
-      return aVal > bVal ? 1 : -1;
-    });
-
-    dispatch(setProducts(sorted));
+    // Apply sorting logic here
   };
 
   const handleSelectAll = (checked) => {
     if (checked) {
-      setSelectedProducts(filteredItems.map((p) => p.id));
+      setSelectedProducts(currentItems.map((p) => p.id));
     } else {
       setSelectedProducts([]);
     }
@@ -158,32 +151,31 @@ const Products = () => {
     console.log(`Bulk action: ${action} on products:`, selectedProducts);
 
     if (action === "delete") {
-      setShowDeleteModal(true);
-    } else if (action === "edit") {
-      // Navigate to bulk edit page with selected product IDs
-      const ids = selectedProducts.join(",");
-      navigate(`/dashboard/products/bulk-edit?ids=${ids}`);
+      selectedProducts.forEach((productId) => {
+        dispatch(deleteProduct(productId));
+      });
+      setSelectedProducts([]);
     }
     // Add other bulk actions here
   };
 
-  const confirmDelete = () => {
-    selectedProducts.forEach((productId) => {
-      dispatch(deleteProduct(productId));
-    });
-    setSelectedProducts([]);
-    setShowDeleteModal(false);
-  };
+  const handleProductAction = (action, product) => {
+    console.log(`Action: ${action} on product:`, product.id);
 
-  const handleRowClick = (product, e) => {
-    // Only prevent navigation if clicking directly on checkbox
-    if (e.target.type === "checkbox") {
-      return;
+    switch (action) {
+      case "delete":
+        dispatch(deleteProduct(product.id));
+        break;
+      case "duplicate":
+        // Add duplicate logic
+        break;
+      case "edit":
+        // Navigate to edit page
+        break;
+      case "view":
+        // Navigate to view page
+        break;
     }
-
-    console.log("Row clicked for product:", product.name, "Target:", e.target);
-    // Navigate to edit page when clicking on product row
-    navigate(`/dashboard/products/${product.id}/edit`);
   };
 
   const getStatusBadge = (status) => {
@@ -242,21 +234,33 @@ const Products = () => {
           Start by stocking your store with products your customers will love
         </p>
 
-        <div className="flex justify-center">
-          <Button
-            className="bg-primary-700 hover:bg-primary-700 text-white"
-            onClick={() => navigate("/dashboard/products/new")}
-          >
+        <div className="flex justify-center space-x-3 mb-8">
+          <Button onClick={() => setShowEmptyState(false)}>
             <PlusIcon className="h-4 w-4 mr-2" />
             Add product
           </Button>
+          <Button variant="outline" onClick={() => setShowImportModal(true)}>
+            <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+            Import
+          </Button>
+        </div>
+
+        <div className="border-t pt-8">
+          <h4 className="text-md font-medium text-gray-900 mb-2">
+            Find products to sell
+          </h4>
+          <p className="text-sm text-gray-500 mb-4">
+            Have dropshipping or print on demand products shipped directly from
+            the supplier to your customer, and only pay for what you sell.
+          </p>
+          <Button variant="outline">Browse product sourcing apps</Button>
         </div>
       </div>
     </div>
   );
 
   const ProductsTable = () => (
-    <div className="overflow-x-auto overflow-y-visible">
+    <div className="overflow-hidden">
       <Table>
         <Table.Header>
           <Table.Row>
@@ -264,27 +268,25 @@ const Products = () => {
               <input
                 type="checkbox"
                 checked={
-                  selectedProducts.length === filteredItems.length &&
-                  filteredItems.length > 0
+                  selectedProducts.length === currentItems.length &&
+                  currentItems.length > 0
                 }
                 onChange={(e) => handleSelectAll(e.target.checked)}
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
             </Table.Head>
-            <Table.Head className="text-xs">Product</Table.Head>
-            <Table.Head className="text-xs">Status</Table.Head>
-            <Table.Head className="text-xs">Inventory</Table.Head>
-            <Table.Head className="text-xs">Category</Table.Head>
+            <Table.Head>Product</Table.Head>
+            <Table.Head>Status</Table.Head>
+            <Table.Head>Inventory</Table.Head>
+            <Table.Head>Category</Table.Head>
+            <Table.Head>Channels</Table.Head>
+            <Table.Head className="w-12"></Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
-          {filteredItems.map((product) => (
-            <tr
-              key={product.id}
-              className="hover:bg-gray-50 cursor-pointer transition-colors"
-              onClick={(e) => handleRowClick(product, e)}
-            >
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+          {currentItems.map((product) => (
+            <Table.Row key={product.id}>
+              <Table.Cell>
                 <input
                   type="checkbox"
                   checked={selectedProducts.includes(product.id)}
@@ -293,27 +295,25 @@ const Products = () => {
                   }
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              </Table.Cell>
+              <Table.Cell>
                 <div className="flex items-center">
-                  <div className="h-8 w-8 flex-shrink-0">
-                    <div className="h-8 w-8 rounded bg-gray-200 flex items-center justify-center">
+                  <div className="h-10 w-10 flex-shrink-0">
+                    <div className="h-10 w-10 rounded bg-gray-200 flex items-center justify-center">
                       <span className="text-xs text-gray-500">IMG</span>
                     </div>
                   </div>
-                  <div className="ml-3">
-                    <div className="text-xs font-medium text-gray-900">
+                  <div className="ml-4">
+                    <div className="text-sm font-medium text-gray-900">
                       {product.name}
                     </div>
-                    <div className="text-xs text-gray-500">{product.sku}</div>
+                    <div className="text-sm text-gray-500">{product.sku}</div>
                   </div>
                 </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {getStatusBadge(product.status)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <div className="text-xs text-gray-900">
+              </Table.Cell>
+              <Table.Cell>{getStatusBadge(product.status)}</Table.Cell>
+              <Table.Cell>
+                <div className="text-sm text-gray-900">
                   {product.inventory > 0 ? (
                     `${product.inventory} in stock`
                   ) : (
@@ -325,13 +325,52 @@ const Products = () => {
                     </div>
                   )}
                 </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <span className="text-xs text-gray-900">
+              </Table.Cell>
+              <Table.Cell>
+                <span className="text-sm text-gray-900">
                   {product.category}
                 </span>
-              </td>
-            </tr>
+              </Table.Cell>
+              <Table.Cell>
+                <span className="text-sm text-gray-900">2</span>
+              </Table.Cell>
+              <Table.Cell>
+                <Dropdown
+                  align="right"
+                  trigger={
+                    <Button variant="ghost" size="sm">
+                      <EllipsisVerticalIcon className="h-4 w-4" />
+                    </Button>
+                  }
+                >
+                  <Dropdown.Item
+                    onClick={() => handleProductAction("edit", product)}
+                  >
+                    <PencilIcon className="h-4 w-4 mr-2" />
+                    Edit
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleProductAction("duplicate", product)}
+                  >
+                    <DocumentDuplicateIcon className="h-4 w-4 mr-2" />
+                    Duplicate
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleProductAction("view", product)}
+                  >
+                    <EyeIcon className="h-4 w-4 mr-2" />
+                    View
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={() => handleProductAction("delete", product)}
+                    className="text-red-600 hover:bg-red-50"
+                  >
+                    <TrashIcon className="h-4 w-4 mr-2" />
+                    Delete
+                  </Dropdown.Item>
+                </Dropdown>
+              </Table.Cell>
+            </Table.Row>
           ))}
         </Table.Body>
       </Table>
@@ -382,37 +421,36 @@ const Products = () => {
     </Modal>
   );
 
-  const DeleteConfirmationModal = () => (
-    <Modal
-      isOpen={showDeleteModal}
-      onClose={() => setShowDeleteModal(false)}
-      title="Delete products"
-      size="sm"
-    >
-      <div className="space-y-4">
-        <p className="text-sm text-gray-600">
-          Are you sure you want to delete {selectedProducts.length} product
-          {selectedProducts.length > 1 ? "s" : ""}? This action cannot be
-          undone.
-        </p>
-        <div className="flex justify-end space-x-3">
-          <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-          <Button
-            onClick={confirmDelete}
-            className="bg-red-600 hover:bg-red-700 text-white"
-          >
-            Delete
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-
   return (
     <div>
       <Breadcrumbs items={breadcrumbItems} />
+
+      {/* Demo Toggle */}
+      <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-medium text-yellow-800">Demo Mode</h3>
+            <p className="text-sm text-yellow-700">
+              Toggle between empty and populated states
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-yellow-700">Show Empty State:</span>
+            <button
+              onClick={() => setShowEmptyState(!showEmptyState)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                showEmptyState ? "bg-primary-600" : "bg-gray-200"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  showEmptyState ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Header */}
       <div className="mb-6">
@@ -423,7 +461,27 @@ const Products = () => {
             <Button variant="outline" onClick={() => setShowImportModal(true)}>
               Import
             </Button>
-            <Button onClick={() => navigate("/dashboard/products/new")}>
+            <Dropdown
+              trigger={
+                <Button variant="outline">
+                  More actions
+                  <ChevronDownIcon className="ml-2 h-4 w-4" />
+                </Button>
+              }
+            >
+              {bulkActions.map((action) => (
+                <Dropdown.Item
+                  key={action.action}
+                  onClick={() => handleBulkAction(action.action)}
+                  className={
+                    action.destructive ? "text-red-600 hover:bg-red-50" : ""
+                  }
+                >
+                  {action.label}
+                </Dropdown.Item>
+              ))}
+            </Dropdown>
+            <Button onClick={() => setShowEmptyState(false)}>
               <PlusIcon className="h-4 w-4 mr-2" />
               Add product
             </Button>
@@ -431,137 +489,111 @@ const Products = () => {
         </div>
       </div>
 
-      {filteredItems.length === 0 ? (
-        <Card>
-          <EmptyState />
-        </Card>
-      ) : (
-        <Card>
-          {/* Tabs with Search and Filters */}
-          <div className="border-b border-gray-200">
-            <div className="flex items-center justify-between px-6 py-4">
-              <nav className="-mb-px flex space-x-8">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleTabChange(tab.id)}
-                    className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab.id
-                        ? "border-primary-500 text-primary-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    {tab.name}
-                    {tab.count > 0 && (
-                      <span className="ml-2 py-0.5 px-2 text-xs bg-gray-100 text-gray-600 rounded-full">
-                        {tab.count}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </nav>
+      <Card>
+        {/* Tabs */}
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8 px-6">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === tab.id
+                    ? "border-primary-500 text-primary-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                {tab.name}
+                {tab.count > 0 && (
+                  <span className="ml-2 py-0.5 px-2 text-xs bg-gray-100 text-gray-600 rounded-full">
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
+            <button className="text-gray-400 hover:text-gray-600 py-4 px-1">
+              <PlusIcon className="h-5 w-5" />
+            </button>
+          </nav>
+        </div>
 
-              <div className="flex items-center space-x-2">
-                {selectedProducts.length > 0 ? (
-                  /* Bulk Actions */
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm text-gray-700">
-                      {selectedProducts.length} product
-                      {selectedProducts.length > 1 ? "s" : ""} selected
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleBulkAction("edit")}
-                      className="text-xs"
-                    >
+        {showEmptyState || currentItems.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <>
+            {/* Filters and Search */}
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Searching in all products"
+                      value={searchQuery}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+                      style={{ width: "300px" }}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm">
+                    <FunnelIcon className="h-4 w-4" />
+                  </Button>
+                  <Dropdown
+                    trigger={
+                      <Button variant="ghost" size="sm">
+                        <ArrowsUpDownIcon className="h-4 w-4" />
+                      </Button>
+                    }
+                  >
+                    {sortOptions.map((option) => (
+                      <Dropdown.Item
+                        key={option.value}
+                        onClick={() => handleSort(option.value)}
+                      >
+                        {option.label}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown>
+                </div>
+              </div>
+            </div>
+
+            {/* Products Table */}
+            <ProductsTable />
+
+            {/* Footer */}
+            {selectedProducts.length > 0 && (
+              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600">
+                    {selectedProducts.length} products selected
+                  </span>
+                  <div className="flex items-center space-x-2">
+                    <Button variant="outline" size="sm">
                       Edit products
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleBulkAction("delete")}
-                      className="text-red-600 border-red-300 hover:bg-red-50 text-xs"
                     >
                       Delete products
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setSelectedProducts([])}
-                      className="text-xs text-gray-500"
-                    >
-                      Clear
-                    </Button>
                   </div>
-                ) : (
-                  /* Search and Sort */
-                  <>
-                    {/* Expandable Search */}
-                    <div className="flex items-center">
-                      {!isSearchExpanded ? (
-                        <button
-                          onClick={() => setIsSearchExpanded(true)}
-                          className="p-2 rounded hover:bg-gray-100 transition-colors"
-                        >
-                          <MagnifyingGlassIcon className="h-4 w-4 text-gray-500" />
-                        </button>
-                      ) : (
-                        <div className="flex items-center bg-white border border-gray-300 rounded-lg">
-                          <MagnifyingGlassIcon className="h-4 w-4 text-gray-400 ml-3" />
-                          <input
-                            type="text"
-                            placeholder="Search products"
-                            value={searchQuery}
-                            onChange={(e) => handleSearch(e.target.value)}
-                            className="pl-2 pr-3 py-2 text-sm focus:outline-none w-64"
-                            autoFocus
-                          />
-                          <button
-                            onClick={() => {
-                              setIsSearchExpanded(false);
-                              setSearchQuery("");
-                              handleSearch("");
-                            }}
-                            className="p-1 mr-2 rounded hover:bg-gray-100"
-                          >
-                            <XMarkIcon className="h-4 w-4 text-gray-400" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="relative">
-                      <select
-                        value={`${sortBy}${
-                          sortOrder === "desc" ? "-desc" : ""
-                        }`}
-                        onChange={(e) => handleSort(e.target.value)}
-                        className="appearance-none bg-white border border-gray-300 rounded-md px-3 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 pr-8"
-                      >
-                        {sortOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDownIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400 pointer-events-none" />
-                    </div>
-                  </>
-                )}
+                </div>
               </div>
-            </div>
-          </div>
-
-          {/* Products Table */}
-          <ProductsTable />
-        </Card>
-      )}
+            )}
+          </>
+        )}
+      </Card>
 
       <ImportModal />
-      <DeleteConfirmationModal />
     </div>
   );
 };
 
-export default Products;
+export default ProductsDemo;
