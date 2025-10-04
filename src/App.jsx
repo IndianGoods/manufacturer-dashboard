@@ -15,6 +15,10 @@ import Orders from './pages/dashboard/Orders'
 import Inventory from './pages/dashboard/Inventory'
 import ProductDetail from './pages/dashboard/ProductDetail'
 import OrderDetailPage from './pages/dashboard/orders/OrderDetailPage'
+import Settings from './pages/dashboard/settings/Settings'
+// import ChatSupportPage from './pages/dashboard/ChatBot'
+import SupportTicketSystem from './pages/dashboard/SupportTicket'
+
 
 function App() {
   return (
@@ -46,8 +50,9 @@ function App() {
             <Route path="rfqs" element={<div>RFQs Page</div>} />
             <Route path="discounts" element={<div>Discounts Page</div>} />
             <Route path="analytics" element={<div>Analytics Page</div>} />
-            <Route path="support" element={<div>Support Page</div>} />
-            <Route path="settings" element={<div>Settings Page</div>} />
+            {/* <Route path="support" element={<ChatSupportPage />} /> */}
+            <Route path="support" element={<SupportTicketSystem />} />
+            <Route path="settings" element={<Settings />} />
 
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
