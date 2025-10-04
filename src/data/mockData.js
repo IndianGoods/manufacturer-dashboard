@@ -308,7 +308,7 @@ export const mockProducts = [
 // Mock Orders Data
 export const mockOrders = [
   {
-    id: 'ord-1',
+    id: 'ord-1002',
     orderNumber: '#1001',
     customer: {
       name: 'John Smith',
@@ -346,7 +346,7 @@ export const mockOrders = [
     updatedAt: '2024-09-26T14:20:00Z',
   },
   {
-    id: 'ord-2',
+    id: 'ord-1001',
     orderNumber: '#1002',
     customer: {
       name: 'Sarah Johnson',
@@ -384,7 +384,7 @@ export const mockOrders = [
     updatedAt: '2024-09-26T15:45:00Z',
   },
   {
-    id: 'ord-3',
+    id: 'ord-1003',
     orderNumber: '#1003',
     customer: {
       name: 'Mike Chen',
@@ -437,7 +437,7 @@ export const mockOrders = [
     updatedAt: '2024-09-27T09:30:00Z',
   },
   {
-    id: 'ord-4',
+    id: 'ord-1004',
     orderNumber: '#1004',
     customer: {
       name: 'Emily Davis',
