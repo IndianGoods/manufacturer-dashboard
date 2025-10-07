@@ -5,6 +5,14 @@ import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import Badge from '../../components/ui/Badge'
+import Breadcrumbs from '../../components/layout/Breadcrumbs'
+import {
+  ArrowLeftIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  ArrowPathIcon,
+  ClockIcon
+} from '@heroicons/react/24/outline'
 
 const ProductDetail = () => {
   const { id } = useParams()
@@ -167,82 +175,86 @@ const ProductDetail = () => {
     )
   }
 
+  const breadcrumbItems = [
+    { name: 'Products', href: '/dashboard/products' },
+    { name: product.name }
+  ]
+
   return (
-    <div className="p-3 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-4 bg-white rounded-lg border border-gray-200 p-3 shadow-sm">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
+    <div className="space-y-6">
+      <Breadcrumbs items={breadcrumbItems} />
+      
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
             onClick={() => navigate('/dashboard/inventory')}
-            className="flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm px-2 py-1.5"
+            className="p-2"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back
+            <ArrowLeftIcon className="h-4 w-4" />
           </Button>
-          <div className="border-l border-gray-200 pl-3">
-            <h1 className="text-lg font-semibold text-gray-900">{product.name}</h1>
-            <p className="text-xs text-gray-500">{product.category} • {product.sku}</p>
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold text-gray-900">{product.name}</h1>
+            <p className="text-sm text-gray-600">{product.category} • SKU: {product.sku}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           {/* Save Status Indicator */}
           <div className="flex items-center gap-2">
             {isSaving && (
-              <div className="flex items-center gap-1.5 text-gray-600 bg-gray-50 px-2 py-1 rounded text-xs">
-                <svg className="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                <span>Saving</span>
-              </div>
+              <Badge variant="outline" className="flex items-center gap-1.5 text-blue-600 border-blue-200">
+                <ArrowPathIcon className="w-3 h-3 animate-spin" />
+                <span className="text-xs">Saving</span>
+              </Badge>
             )}
             {saveStatus === 'saved' && (
-              <div className="flex items-center gap-1.5 text-gray-700 bg-gray-100 px-2 py-1 rounded text-xs">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <span>Saved</span>
-              </div>
+              <Badge variant="outline" className="flex items-center gap-1.5 text-green-600 border-green-200">
+                <CheckCircleIcon className="w-3 h-3" />
+                <span className="text-xs">Saved</span>
+              </Badge>
             )}
             {saveStatus === 'error' && (
-              <div className="flex items-center gap-1.5 text-gray-700 bg-gray-100 px-2 py-1 rounded text-xs">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                <span>Error</span>
-              </div>
+              <Badge variant="outline" className="flex items-center gap-1.5 text-red-600 border-red-200">
+                <ExclamationTriangleIcon className="w-3 h-3" />
+                <span className="text-xs">Error</span>
+              </Badge>
             )}
             {lastSavedRef.current && !isSaving && !saveStatus && (
-              <span className="text-xs text-gray-400">
-                {lastSavedRef.current.toLocaleTimeString()}
-              </span>
+              <div className="flex items-center gap-1.5 text-gray-500">
+                <ClockIcon className="w-3 h-3" />
+                <span className="text-xs">
+                  {lastSavedRef.current.toLocaleTimeString()}
+                </span>
+              </div>
             )}
           </div>
-          <div className={`px-2 py-1 rounded text-xs font-medium ${
-            product.status === 'active' ? 'bg-gray-100 text-gray-700' : 'bg-gray-200 text-gray-600'
-          }`}>
+          <Badge 
+            variant={product.status === 'active' ? 'default' : 'secondary'}
+            className="capitalize"
+          >
             {product.status}
-          </div>
+          </Badge>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Variant List */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            <div className="px-3 py-2 border-b border-gray-100">
-              <h3 className="text-sm font-medium text-gray-900">Variants</h3>
-            </div>
-            <div className="p-2">
-              <div className="space-y-1">
+          <Card>
+            <Card.Header className="px-4 py-3 border-b">
+              <h3 className="text-sm font-semibold text-gray-900">Variants</h3>
+              <p className="text-xs text-gray-600 mt-1">{product.variants.length} variant{product.variants.length !== 1 ? 's' : ''}</p>
+            </Card.Header>
+            <Card.Content className="p-4">
+              <div className="space-y-2">
                 {product.variants.map((variant) => (
                   <div
                     key={variant.id}
-                    className={`p-2 rounded border cursor-pointer transition-all duration-150 ${
+                    className={`p-3 rounded-lg border cursor-pointer transition-all duration-200 ${
                       selectedVariant?.id === variant.id 
-                        ? 'border-gray-400 bg-gray-50' 
-                        : 'border-gray-100 hover:bg-gray-25 hover:border-gray-200'
+                        ? 'border-primary-500 bg-primary-50 shadow-sm' 
+                        : 'border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm'
                     }`}
                     onClick={() => setSelectedVariant(variant)}
                   >
@@ -262,57 +274,59 @@ const ProductDetail = () => {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
+            </Card.Content>
+          </Card>
         </div>
 
         {/* Selected Variant Details */}
         <div className="lg:col-span-3">
           {selectedVariant && (
-            <div className="space-y-3">
+            <div className="space-y-6">
               {/* Tabs Navigation */}
-              <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-                <div className="px-4 py-3 border-b border-gray-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-900">
-                      {selectedVariant.name}
-                    </h3>
-                    <span className="text-xs text-gray-400">
+              <Card>
+                <Card.Header className="px-6 py-4 border-b">
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {selectedVariant.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">SKU: {selectedVariant.sku}</p>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
                       Auto-save enabled
-                    </span>
+                    </Badge>
                   </div>
                   <nav className="flex space-x-1">
                     {[
-                      { key: 'basic', label: 'Basic', icon: '○' },
-                      { key: 'pricing', label: 'Pricing', icon: '○' },
-                      { key: 'inventory', label: 'Stock', icon: '○' },
-                      { key: 'shipping', label: 'Ship', icon: '○' }
+                      { key: 'basic', label: 'Basic Info' },
+                      { key: 'pricing', label: 'Pricing' },
+                      { key: 'inventory', label: 'Inventory' },
+                      { key: 'shipping', label: 'Shipping' }
                     ].map((tab) => (
                       <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                        className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
                           activeTab === tab.key
-                            ? 'bg-gray-900 text-white'
-                            : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                            ? 'border-primary-500 text-primary-600'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                         }`}
                       >
-                        <span className="text-xs">{tab.icon}</span>
                         {tab.label}
                       </button>
                     ))}
                   </nav>
-                </div>
+                </Card.Header>
 
                 {/* Tab Content */}
-                <div className="p-4">
+                <Card.Content className="p-6">
                   {activeTab === 'basic' && (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       {/* Photo Management */}
                       <div className="space-y-4">
-                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-3">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
                           <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
                             Photo
                           </h4>
                           <div className="space-y-3">
@@ -345,9 +359,9 @@ const ProductDetail = () => {
                           </div>
                         </div>
 
-                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-3">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
                           <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
                             Color
                           </h4>
                           <div className="space-y-3">
@@ -390,9 +404,9 @@ const ProductDetail = () => {
 
                       {/* Variant Details */}
                       <div className="space-y-4">
-                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-3">
+                        <div className="bg-gray-50 rounded-lg border border-gray-200 p-4">
                           <h4 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-gray-400 rounded-full"></span>
+                            <span className="w-2 h-2 bg-primary-500 rounded-full"></span>
                             Basic Info
                           </h4>
                           <div className="space-y-3">
@@ -688,8 +702,8 @@ const ProductDetail = () => {
                       </div>
                     </div>
                   )}
-                </div>
-              </div>
+                </Card.Content>
+              </Card>
             </div>
           )}
         </div>

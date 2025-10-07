@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,6 +26,14 @@ import CreateDiscount from "./pages/dashboard/CreateDiscount";
 import AnalyticsDashboard from "./pages/dashboard/AnalyticsDashboard";
 import EditDiscount from "./pages/dashboard/EditDiscount";
 
+import Settings from './pages/dashboard/settings/Settings'
+// import ChatSupportPage from './pages/dashboard/ChatBot'
+import SupportTicketSystem from './pages/dashboard/SupportTicket'
+import RFQPage from './pages/dashboard/RFQPage'
+import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
+
+
+
 function App() {
   return (
     <Provider store={store}>
@@ -49,16 +58,24 @@ function App() {
             <Route path="products/:id/edit" element={<EditProduct />} />
             <Route path="products/bulk-edit" element={<BulkEditProducts />} />
             <Route path="products/:id" element={<ProductDetail />} />
-            <Route path="products/inventory" element={<Inventory />} />
+            <Route path="inventory" element={<Inventory />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
-            <Route path="rfqs" element={<div>RFQs Page</div>} />
+
+            
             <Route path="discounts" element={<Discounts />} />
             <Route path="discounts/new" element={<CreateDiscount />} />
             <Route path="discounts/:id/edit" element={<EditDiscount />} />
             <Route path="analytics" element={<AnalyticsDashboard />} />
-            <Route path="support" element={<div>Support Page</div>} />
-            <Route path="settings" element={<div>Settings Page</div>} />
+            
+
+            <Route path="rfqs" element={<RFQPage />} />
+            <Route path="rfqs/:id" element={<RFQDetailPage />} />
+            
+            {/* <Route path="support" element={<ChatSupportPage />} /> */}
+            <Route path="support" element={<SupportTicketSystem />} />
+            <Route path="settings" element={<Settings />} />
+
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
