@@ -140,13 +140,13 @@ const RFQDetailPage = () => {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button
+            {/* <Button
               variant="ghost"
               onClick={() => navigate("/dashboard/rfqs")}
               className="p-2"
             >
               <ArrowLeftIcon className="h-4 w-4" />
-            </Button>
+            </Button> */}
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
                 {selectedRfq.rfqNumber}

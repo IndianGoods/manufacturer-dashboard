@@ -28,7 +28,9 @@ import EditDiscount from "./pages/dashboard/EditDiscount";
 
 import Settings from './pages/dashboard/settings/Settings'
 // import ChatSupportPage from './pages/dashboard/ChatBot'
-import SupportTicketSystem from './pages/dashboard/SupportTicket'
+import SupportTickets from './pages/dashboard/SupportTickets'
+import SupportTicketDetail from './pages/dashboard/SupportTicketDetail'
+import CreateSupportTicket from './pages/dashboard/CreateSupportTicket'
 import RFQPage from './pages/dashboard/RFQPage'
 import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
 
@@ -73,7 +75,9 @@ function App() {
             <Route path="rfqs/:id" element={<RFQDetailPage />} />
             
             {/* <Route path="support" element={<ChatSupportPage />} /> */}
-            <Route path="support" element={<SupportTicketSystem />} />
+            <Route path="support" element={<SupportTickets />} />
+            <Route path="support/create" element={<CreateSupportTicket />} />
+            <Route path="support/:id" element={<SupportTicketDetail />} />
             <Route path="settings" element={<Settings />} />
 
           </Route>

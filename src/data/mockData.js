@@ -308,7 +308,7 @@ export const mockProducts = [
 // Mock Orders Data
 export const mockOrders = [
   {
-    id: 'ord-1002',
+    id: 'ord-1001',
     orderNumber: '#1001',
     customer: {
       name: 'John Smith',
@@ -346,7 +346,7 @@ export const mockOrders = [
     updatedAt: '2024-09-26T14:20:00Z',
   },
   {
-    id: 'ord-1001',
+    id: 'ord-1002',
     orderNumber: '#1002',
     customer: {
       name: 'Sarah Johnson',
@@ -539,6 +539,78 @@ export const mockRfqs = [
     createdAt: '2024-09-18T14:20:00Z',
     updatedAt: '2024-09-24T16:45:00Z',
   },
+  {
+    id: 'rfq-3',
+    rfqNumber: 'RFQ-003',
+    customer: {
+      name: 'Manufacturing Corp',
+      email: 'procurement@mfgcorp.com',
+      phone: '+1 (555) 456-7890',
+      company: 'Manufacturing Corp',
+    },
+    status: 'accepted',
+    priority: 'high',
+    products: [
+      {
+        name: 'Professional Camera Lens',
+        quantity: 10,
+        specifications: 'For industrial inspection systems',
+      },
+    ],
+    estimatedValue: 8999,
+    deadline: '2024-11-15T23:59:59Z',
+    notes: 'Urgent requirement for production line',
+    createdAt: '2024-09-10T08:00:00Z',
+    updatedAt: '2024-09-25T16:00:00Z',
+  },
+  {
+    id: 'rfq-4',
+    rfqNumber: 'RFQ-004',
+    customer: {
+      name: 'Retail Chain LLC',
+      email: 'purchasing@retailchain.com',
+      phone: '+1 (555) 789-0123',
+      company: 'Retail Chain LLC',
+    },
+    status: 'accepted',
+    priority: 'low',
+    products: [
+      {
+        name: 'Organic Cotton T-Shirt',
+        quantity: 500,
+        specifications: 'Multiple colors required',
+      },
+    ],
+    estimatedValue: 12500,
+    deadline: '2024-09-30T23:59:59Z',
+    notes: 'Seasonal stock requirement',
+    createdAt: '2024-09-01T12:00:00Z',
+    updatedAt: '2024-09-30T23:59:59Z',
+  },
+  {
+    id: 'rfq-5',
+    rfqNumber: 'RFQ-005',
+    customer: {
+      name: 'Startup Innovations',
+      email: 'orders@startupinnovations.com',
+      phone: '+1 (555) 321-6547',
+      company: 'Startup Innovations',
+    },
+    status: 'pending',
+    priority: 'medium',
+    products: [
+      {
+        name: 'Smart Watch Series 5',
+        quantity: 100,
+        specifications: 'Employee gift program',
+      },
+    ],
+    estimatedValue: 24999,
+    deadline: '2024-11-30T23:59:59Z',
+    notes: 'Looking for competitive pricing',
+    createdAt: '2024-09-28T14:30:00Z',
+    updatedAt: '2024-09-28T14:30:00Z',
+  },
 ]
 
 // Mock Discounts Data
@@ -641,6 +713,210 @@ export const mockAnalytics = {
     },
   ],
 }
+
+// Mock Support Tickets Data
+export const mockSupportTickets = [
+  {
+    id: 'TKT-2025-0001',
+    subject: 'Production line equipment error code E-247',
+    category: 'Technical Issue',
+    priority: 'Urgent',
+    status: 'In Progress',
+    createdDate: '2025-10-01T09:30:00',
+    lastUpdated: '2025-10-04T11:20:00',
+    description: 'Our CNC machine is showing error code E-247 and has stopped production. This is affecting our manufacturing schedule. Need immediate assistance.',
+    orderId: 'ORD-45678',
+    attachments: ['error_screenshot.png', 'machine_log.pdf'],
+    responses: [
+      {
+        sender: 'John Doe',
+        role: 'user',
+        timestamp: '2025-10-01T09:30:00',
+        message: 'Our CNC machine is showing error code E-247 and has stopped production. This is affecting our manufacturing schedule. Need immediate assistance.',
+        attachments: ['error_screenshot.png', 'machine_log.pdf']
+      },
+      {
+        sender: 'Sarah Tech Support',
+        role: 'support',
+        timestamp: '2025-10-01T10:15:00',
+        message: 'Thank you for reaching out. Error code E-247 typically indicates a servo motor calibration issue. Our technician has been assigned to your case. Can you confirm the machine model and when this error first appeared?',
+        attachments: []
+      },
+      {
+        sender: 'John Doe',
+        role: 'user',
+        timestamp: '2025-10-01T10:45:00',
+        message: 'Machine model is XYZ-5000. The error appeared this morning at 8:30 AM during startup sequence.',
+        attachments: []
+      },
+      {
+        sender: 'Sarah Tech Support',
+        role: 'support',
+        timestamp: '2025-10-04T11:20:00',
+        message: 'Our technician will arrive on-site tomorrow at 2 PM to perform calibration and diagnostics. Please keep the machine powered off until then.',
+        attachments: ['service_schedule.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'Open', timestamp: '2025-10-01T09:30:00' },
+      { status: 'In Progress', timestamp: '2025-10-01T10:15:00' }
+    ]
+  },
+  {
+    id: 'TKT-2025-0002',
+    subject: 'Invoice discrepancy for order ORD-45670',
+    category: 'Billing Question',
+    priority: 'High',
+    status: 'Open',
+    createdDate: '2025-10-02T14:20:00',
+    lastUpdated: '2025-10-02T14:20:00',
+    description: 'The invoice amount does not match our purchase order. PO shows $15,000 but invoice is $16,500. Please review and correct.',
+    orderId: 'ORD-45670',
+    attachments: ['purchase_order.pdf', 'invoice_received.pdf'],
+    responses: [
+      {
+        sender: 'Maria Garcia',
+        role: 'user',
+        timestamp: '2025-10-02T14:20:00',
+        message: 'The invoice amount does not match our purchase order. PO shows $15,000 but invoice is $16,500. Please review and correct.',
+        attachments: ['purchase_order.pdf', 'invoice_received.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'Open', timestamp: '2025-10-02T14:20:00' }
+    ]
+  },
+  {
+    id: 'TKT-2025-0003',
+    subject: 'Request for bulk order discount feature',
+    category: 'Feature Request',
+    priority: 'Medium',
+    status: 'Open',
+    createdDate: '2025-10-03T10:00:00',
+    lastUpdated: '2025-10-03T10:00:00',
+    description: 'Would like to see automatic bulk discount calculation in the platform when ordering quantities above 1000 units. This would streamline our purchasing process.',
+    orderId: '',
+    attachments: [],
+    responses: [
+      {
+        sender: 'David Chen',
+        role: 'user',
+        timestamp: '2025-10-03T10:00:00',
+        message: 'Would like to see automatic bulk discount calculation in the platform when ordering quantities above 1000 units. This would streamline our purchasing process.',
+        attachments: []
+      }
+    ],
+    statusHistory: [
+      { status: 'Open', timestamp: '2025-10-03T10:00:00' }
+    ]
+  },
+  {
+    id: 'TKT-2025-0004',
+    subject: 'Product quality issue - batch #B2025-089',
+    category: 'Product Quality',
+    priority: 'High',
+    status: 'Resolved',
+    createdDate: '2025-09-28T08:15:00',
+    lastUpdated: '2025-10-02T16:30:00',
+    description: 'Received batch with dimensional inconsistencies. Approximately 15% of units are out of tolerance. Need replacement batch urgently.',
+    orderId: 'ORD-45665',
+    attachments: ['quality_report.pdf', 'measurement_data.xlsx'],
+    responses: [
+      {
+        sender: 'Robert Kim',
+        role: 'user',
+        timestamp: '2025-09-28T08:15:00',
+        message: 'Received batch with dimensional inconsistencies. Approximately 15% of units are out of tolerance. Need replacement batch urgently.',
+        attachments: ['quality_report.pdf', 'measurement_data.xlsx']
+      },
+      {
+        sender: 'Quality Assurance Team',
+        role: 'support',
+        timestamp: '2025-09-28T11:00:00',
+        message: 'We apologize for this issue. Our QA team is reviewing your report. A replacement batch has been expedited and will ship within 48 hours.',
+        attachments: []
+      },
+      {
+        sender: 'Quality Assurance Team',
+        role: 'support',
+        timestamp: '2025-10-02T16:30:00',
+        message: 'Replacement batch #B2025-095 has been shipped via express delivery. Tracking number: TR-8845692. You should receive it by tomorrow. We have issued a full credit for the defective batch.',
+        attachments: ['replacement_invoice.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'Open', timestamp: '2025-09-28T08:15:00' },
+      { status: 'In Progress', timestamp: '2025-09-28T11:00:00' },
+      { status: 'Resolved', timestamp: '2025-10-02T16:30:00' }
+    ]
+  },
+  {
+    id: 'TKT-2025-0005',
+    subject: 'Delayed shipment for order ORD-45680',
+    category: 'Shipping/Delivery',
+    priority: 'Medium',
+    status: 'Closed',
+    createdDate: '2025-09-25T13:40:00',
+    lastUpdated: '2025-09-30T09:15:00',
+    description: 'Order was scheduled to arrive on Sept 26 but has not been delivered yet. Please provide updated delivery information.',
+    orderId: 'ORD-45680',
+    attachments: [],
+    responses: [
+      {
+        sender: 'Lisa Wang',
+        role: 'user',
+        timestamp: '2025-09-25T13:40:00',
+        message: 'Order was scheduled to arrive on Sept 26 but has not been delivered yet. Please provide updated delivery information.',
+        attachments: []
+      },
+      {
+        sender: 'Logistics Team',
+        role: 'support',
+        timestamp: '2025-09-25T15:20:00',
+        message: 'We apologize for the delay. There was a carrier issue. Your shipment is now scheduled for delivery on Sept 28. Tracking: TR-8845123',
+        attachments: []
+      },
+      {
+        sender: 'Lisa Wang',
+        role: 'user',
+        timestamp: '2025-09-28T16:00:00',
+        message: 'Shipment received. Thank you for the update.',
+        attachments: []
+      },
+      {
+        sender: 'Logistics Team',
+        role: 'support',
+        timestamp: '2025-09-30T09:15:00',
+        message: 'Great! We are glad the shipment arrived. Closing this ticket. Please let us know if you need anything else.',
+        attachments: []
+      }
+    ],
+    statusHistory: [
+      { status: 'Open', timestamp: '2025-09-25T13:40:00' },
+      { status: 'In Progress', timestamp: '2025-09-25T15:20:00' },
+      { status: 'Resolved', timestamp: '2025-09-28T16:00:00' },
+      { status: 'Closed', timestamp: '2025-09-30T09:15:00' }
+    ]
+  }
+];
+
+// Support Ticket Categories
+export const supportTicketCategories = [
+  'Technical Issue',
+  'Billing Question',
+  'Order Issue',
+  'Feature Request',
+  'General Inquiry',
+  'Account Management',
+  'Product Quality',
+  'Shipping/Delivery'
+];
+
+// Support Ticket Priorities
+export const supportTicketPriorities = ['Low', 'Medium', 'High', 'Urgent'];
+
+// Support Ticket Statuses
+export const supportTicketStatuses = ['All', 'Open', 'In Progress', 'Resolved', 'Closed'];
 
 // Mock User Data
 export const mockUser = {

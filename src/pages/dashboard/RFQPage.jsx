@@ -9,7 +9,6 @@ import {
   ArrowDownTrayIcon,
   ChevronDownIcon,
   XMarkIcon,
-  EyeIcon,
 } from "@heroicons/react/24/outline";
 import {
   setRfqs,
@@ -93,62 +92,7 @@ const RFQPage = () => {
     { label: "Delete RFQs", action: "delete", destructive: true },
   ];
 
-  // Updated sample RFQ data with proper structure
-  const [rfqs, setRfqsData] = useState([
-    {
-      id: 'rfq-1',
-      rfqNumber: 'RFQ-001',
-      customer: {
-        name: 'Tech Solutions Inc.',
-        email: 'procurement@techsolutions.com',
-        phone: '+1 (555) 234-5678',
-        company: 'Tech Solutions Inc.',
-      },
-      status: 'pending',
-      priority: 'high',
-      products: [
-        {
-          name: 'Premium Wireless Headphones',
-          quantity: 50,
-          specifications: 'Bulk order for corporate use',
-        },
-        {
-          name: 'Smart Watch Series 5',
-          quantity: 25,
-          specifications: 'Employee wellness program',
-        },
-      ],
-      estimatedValue: 15000,
-      deadline: '2024-10-15T23:59:59Z',
-      notes: 'Looking for volume discount pricing',
-      createdAt: '2024-09-20T09:15:00Z',
-      updatedAt: '2024-09-22T11:30:00Z',
-    },
-    {
-      id: 'rfq-2',
-      rfqNumber: 'RFQ-002',
-      customer: {
-        name: 'Fashion Forward LLC',
-        email: 'orders@fashionforward.com',
-        phone: '+1 (555) 345-6789',
-        company: 'Fashion Forward LLC',
-      },
-      status: 'quoted',
-      priority: 'medium',
-      products: [
-        {
-          name: 'Organic Cotton T-Shirt',
-          quantity: 200,
-          specifications: 'Custom printing required',
-        },
-      ],
-      estimatedValue: 4500,
-      deadline: '2024-10-30T23:59:59Z',
-      notes: 'Need samples before final order',
-      createdAt: '2024-09-18T14:20:00Z',
-      updatedAt: '2024-09-24T16:45:00Z',
-    },
-  ]);
+
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -315,7 +259,6 @@ const RFQPage = () => {
             <Table.Head className="text-xs">Priority</Table.Head>
             <Table.Head className="text-xs">Status</Table.Head>
             <Table.Head className="text-xs">Deadline</Table.Head>
-            <Table.Head className="text-xs">Actions</Table.Head>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -373,20 +316,6 @@ const RFQPage = () => {
                   {formatDate(rfq.deadline)}
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/dashboard/rfqs/${rfq.id}`);
-                  }}
-                  className="text-xs"
-                >
-                  <EyeIcon className="h-3 w-3 mr-1" />
-                  View
-                </Button>
-              </td>
             </tr>
           ))}
         </Table.Body>
@@ -438,12 +367,7 @@ const RFQPage = () => {
         </div>
       </div>
 
-      {filteredItems.length === 0 && !searchQuery ? (
-        <Card>
-          <EmptyState />
-        </Card>
-      ) : (
-        <Card>
+      <Card>
         {/* Tabs with Search and Filters */}
         <div className="border-b border-gray-200">
           <div className="flex items-center justify-between px-6 py-4">
@@ -559,7 +483,6 @@ const RFQPage = () => {
           <RFQsTable />
         )}
       </Card>
-      )}
 
       <DeleteConfirmationModal />
     </div>
