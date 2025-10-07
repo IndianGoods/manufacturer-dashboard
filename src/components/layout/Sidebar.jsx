@@ -25,7 +25,7 @@ const navigationItems = [
     icon: ShoppingBagIcon,
     children: [
       { name: 'All Products', href: '/dashboard/products' },
-      { name: 'Inventory', href: '/dashboard/products/inventory' },
+      { name: 'Inventory', href: '/dashboard/inventory' },
     ],
   },
   // { name: 'Inventory', href: '/dashboard/inventory', icon: ArchiveBoxIcon },

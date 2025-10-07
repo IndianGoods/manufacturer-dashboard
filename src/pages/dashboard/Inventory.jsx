@@ -1,8 +1,22 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { mockProducts } from '../../data/mockData'
+import { 
+  ChevronDownIcon, 
+  ChevronUpIcon, 
+  ArrowUpIcon, 
+  ArrowDownIcon,
+  MagnifyingGlassIcon,
+  AdjustmentsHorizontalIcon,
+  DocumentArrowDownIcon,
+  EllipsisVerticalIcon
+} from '@heroicons/react/24/outline'
 import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
+import Card from '../../components/ui/Card'
+import Badge from '../../components/ui/Badge'
+import Table from '../../components/ui/Table'
+import Breadcrumb from '../../components/layout/Breadcrumbs'
 
 const Inventory = () => {
   const navigate = useNavigate()
@@ -13,33 +27,9 @@ const Inventory = () => {
   const [openDropdowns, setOpenDropdowns] = useState({})
   const [selectedVariants, setSelectedVariants] = useState({})
   const [editingValues, setEditingValues] = useState({})
-  const [showModals, setShowModals] = useState({})
   const [products, setProducts] = useState(mockProducts)
   const [selectAll, setSelectAll] = useState(false)
   const containerRef = useRef(null)
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Always close dropdowns when clicking outside the container
-      if (containerRef.current && !containerRef.current.contains(event.target)) {
-        setOpenDropdowns({})
-      }
-    }
-
-    const handleEscapeKey = (event) => {
-      if (event.key === 'Escape') {
-        setOpenDropdowns({})
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    document.addEventListener('keydown', handleEscapeKey)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscapeKey)
-    }
-  }, [])
 
   // Extract all products with their variants
   const allInventoryItems = useMemo(() => {
@@ -139,29 +129,6 @@ const Inventory = () => {
     navigate(`/dashboard/products/${item.productId}`)
   }
 
-  const toggleDropdown = (itemId, dropdownType = 'main', event = null) => {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-    
-    const key = `${itemId}-${dropdownType}`
-    setOpenDropdowns(prev => {
-      const isCurrentlyOpen = prev[key]
-      
-      // For nested dropdowns (unavailable sub-dropdowns), keep main dropdown open
-      if (dropdownType.startsWith('unavailable-') && dropdownType !== 'unavailable') {
-        return {
-          [`${itemId}-unavailable`]: true, // Keep main unavailable dropdown open
-          [key]: !isCurrentlyOpen // Toggle the sub-dropdown
-        }
-      }
-      
-      // For main dropdowns, close others and toggle this one
-      return isCurrentlyOpen ? {} : { [key]: true }
-    })
-  }
-
   const handleVariantSelection = (itemId) => {
     setSelectedVariants(prev => ({
       ...prev,
@@ -183,6 +150,56 @@ const Inventory = () => {
     }
   }
 
+  const handleSortByName = (order) => {
+    setSortBy('name')
+    setSortOrder(order)
+  }
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setOpenDropdowns({})
+      }
+    }
+
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        setOpenDropdowns({})
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('keydown', handleEscapeKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', handleEscapeKey)
+    }
+  }, [])
+
+  const toggleDropdown = (itemId, dropdownType = 'main', event = null) => {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    
+    const key = `${itemId}-${dropdownType}`
+    setOpenDropdowns(prev => {
+      const isCurrentlyOpen = prev[key]
+      
+      // For nested dropdowns, keep main dropdown open
+      if (dropdownType.startsWith('unavailable-') && dropdownType !== 'unavailable') {
+        return {
+          [`${itemId}-unavailable`]: true,
+          [key]: !isCurrentlyOpen
+        }
+      }
+      
+      // For main dropdowns, close others and toggle this one
+      return isCurrentlyOpen ? {} : { [key]: true }
+    })
+  }
+
   const handleValueChange = (itemId, field, value) => {
     setEditingValues(prev => ({
       ...prev,
@@ -190,32 +207,12 @@ const Inventory = () => {
     }))
   }
 
-  const handleSortByName = (order) => {
-    setSortBy('name')
-    setSortOrder(order)
-  }
-
-  const showModal = (itemId, modalType) => {
-    setShowModals(prev => ({
-      ...prev,
-      [`${itemId}-${modalType}`]: true
-    }))
-  }
-
-  const hideModal = (itemId, modalType) => {
-    setShowModals(prev => ({
-      ...prev,
-      [`${itemId}-${modalType}`]: false
-    }))
-  }
-
-  // Update inventory data in products and persist to mockData
+  // Update inventory data in products
   const updateInventoryData = (productId, variantId, field, value, reason = '') => {
     setProducts(prevProducts => {
       const updatedProducts = prevProducts.map(product => {
         if (product.id === productId) {
           if (variantId && product.variants) {
-            // Update variant inventory
             const updatedVariants = product.variants.map(variant => {
               if (variant.id === variantId) {
                 const updatedInventory = { ...variant.inventory }
@@ -240,7 +237,6 @@ const Inventory = () => {
             })
             return { ...product, variants: updatedVariants }
           } else {
-            // Update product inventory (for products without variants)
             const updatedInventory = { ...product.inventory }
             
             if (field === 'available') {
@@ -263,14 +259,12 @@ const Inventory = () => {
         return product
       })
       
-      // Log the update for debugging
       console.log(`Updated ${field} for product ${productId}, variant ${variantId} to ${value}. Reason: ${reason}`)
-      
       return updatedProducts
     })
   }
 
-  // Handle unavailable actions with validation
+  // Handle unavailable actions
   const handleUnavailableAction = (item, type, action, value = 0) => {
     const currentValue = item.unavailable[type] || 0
     
@@ -278,46 +272,37 @@ const Inventory = () => {
       case 'change':
         const newValue = Math.max(0, parseInt(value) || 0)
         updateInventoryData(item.productId, item.variantId, `unavailable.${type}`, newValue)
-        console.log(`Changed ${type} from ${currentValue} to ${newValue}`)
         break
       case 'addToAvailable':
         if (currentValue > 0) {
-          // Move from unavailable to available
           updateInventoryData(item.productId, item.variantId, `unavailable.${type}`, 0)
           updateInventoryData(item.productId, item.variantId, 'available', item.stock + currentValue)
-          console.log(`Moved ${currentValue} from ${type} to available`)
         }
         break
       case 'delete':
         updateInventoryData(item.productId, item.variantId, `unavailable.${type}`, 0)
-        console.log(`Deleted ${currentValue} from ${type}`)
         break
     }
     
-    // Close all dropdowns after action
     setOpenDropdowns({})
   }
 
-  // Handle available/onhand adjustments with validation
+  // Handle inventory adjustments
   const handleInventoryAdjustment = (item, field, adjustment, reason) => {
     const currentValue = field === 'available' ? item.stock : item.onHand
     const newValue = Math.max(0, currentValue + parseInt(adjustment))
     
     updateInventoryData(item.productId, item.variantId, field, newValue, reason)
-    console.log(`Adjusted ${field} from ${currentValue} to ${newValue}. Reason: ${reason}`)
-    
-    // Close all dropdowns after action
     setOpenDropdowns({})
   }
 
-  // Apply editable field changes
+  // Apply field changes
   const applyFieldChange = (item, field) => {
     const editKey = `${item.id}-${field}`
     const newValue = editingValues[editKey]
     
     if (newValue !== undefined && newValue !== null) {
       updateInventoryData(item.productId, item.variantId, field, newValue)
-      // Clear editing value
       setEditingValues(prev => {
         const updated = { ...prev }
         delete updated[editKey]
@@ -330,241 +315,246 @@ const Inventory = () => {
     return openDropdowns[`${itemId}-${dropdownType}`]
   }
 
-  const isModalOpen = (itemId, modalType) => {
-    return showModals[`${itemId}-${modalType}`]
-  }
-
-  const getCommittedOrdersText = (committed) => {
-    return committed === 0 ? 'No committed orders' : `${committed} committed`
-  }
-
-  const getStockStatus = (stock, totalUnavailable) => {
-    if (stock === 0) return { text: 'Out of Stock', color: 'text-red-600 bg-red-50' }
-    if (stock < 10) return { text: 'Low Stock', color: 'text-orange-600 bg-orange-50' }
-    return { text: 'In Stock', color: 'text-green-600 bg-green-50' }
-  }
+  const breadcrumbItems = [
+    { name: 'Inventory' }
+  ]
 
   return (
-    <div ref={containerRef} className="space-y-3">
+    <div ref={containerRef} className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h1 className="text-lg font-semibold text-gray-900">Inventory Management</h1>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-600">Sort:</span>
-            <button
-              onClick={() => handleSortByName('asc')}
-              className={`p-1 rounded ${sortBy === 'name' && sortOrder === 'asc' ? 'bg-blue-100 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-              </svg>
-            </button>
-            <button
-              onClick={() => handleSortByName('desc')}
-              className={`p-1 rounded ${sortBy === 'name' && sortOrder === 'desc' ? 'bg-blue-100 text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="space-y-1">
+          <Breadcrumb items={breadcrumbItems} />
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-semibold text-gray-900">Inventory</h1>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleSortByName('asc')}
+                className={sortBy === 'name' && sortOrder === 'asc' ? 'bg-primary-50 text-primary-600' : ''}
+              >
+                <ArrowUpIcon className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleSortByName('desc')}
+                className={sortBy === 'name' && sortOrder === 'desc' ? 'bg-primary-50 text-primary-600' : ''}
+              >
+                <ArrowDownIcon className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
-        <div className="flex gap-1">
-          <Button size="sm" variant="outline">Bulk Actions</Button>
-          <Button size="sm">Export</Button>
-          <Button 
-            size="sm" 
-            variant="outline"
-            onClick={() => {
-              console.log('Current products state:', products)
-              alert('Check browser console for current products data')
-            }}
-          >
-            Debug
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <AdjustmentsHorizontalIcon className="h-4 w-4 mr-2" />
+            Bulk Actions
+          </Button>
+          <Button variant="outline" size="sm">
+            <DocumentArrowDownIcon className="h-4 w-4 mr-2" />
+            Export
           </Button>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-3 rounded-xl shadow-md">
-        <div className="flex flex-wrap gap-2 items-center">
-          <div className="flex-1 min-w-48">
-            <Input
-              placeholder="Search products, variants, or SKU..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-xs h-7"
-            />
-          </div>
-          
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-2 py-1 text-xs h-7 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            {categories.map(cat => (
-              <option key={cat} value={cat}>
-                {cat === 'all' ? 'All Categories' : cat}
-              </option>
-            ))}
-          </select>
+      <Card>
+        <Card.Content className="p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <MagnifyingGlassIcon className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input
+                  placeholder="Search products, variants, or SKU..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            >
+              {categories.map(cat => (
+                <option key={cat} value={cat}>
+                  {cat === 'all' ? 'All Categories' : cat}
+                </option>
+              ))}
+            </select>
 
-          <select
-            value={`${sortBy}-${sortOrder}`}
-            onChange={(e) => {
-              const [field, order] = e.target.value.split('-')
-              setSortBy(field)
-              setSortOrder(order)
-            }}
-            className="px-2 py-1 text-xs h-7 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          >
-            <option value="name-asc">Name A-Z</option>
-            <option value="name-desc">Name Z-A</option>
-            <option value="stock-desc">Stock High-Low</option>
-            <option value="stock-asc">Stock Low-High</option>
-            <option value="price-desc">Price High-Low</option>
-            <option value="price-asc">Price Low-High</option>
-          </select>
-        </div>
-      </div>
+            <select
+              value={`${sortBy}-${sortOrder}`}
+              onChange={(e) => {
+                const [field, order] = e.target.value.split('-')
+                setSortBy(field)
+                setSortOrder(order)
+              }}
+              className="px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            >
+              <option value="name-asc">Name A-Z</option>
+              <option value="name-desc">Name Z-A</option>
+              <option value="stock-desc">Stock High-Low</option>
+              <option value="stock-asc">Stock Low-High</option>
+              <option value="price-desc">Price High-Low</option>
+              <option value="price-asc">Price Low-High</option>
+            </select>
+          </div>
+        </Card.Content>
+      </Card>
 
       {/* Inventory Table */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-xs">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-10">
+      <Card>
+        <div className="overflow-x-auto overflow-y-visible">
+          <Table>
+            <Table.Header>
+              <Table.Row>
+                <Table.Head className="w-12">
                   <input
                     type="checkbox"
                     checked={selectAll}
                     onChange={handleSelectAll}
-                    className="h-3 w-3 text-blue-600 focus:ring-blue-500 rounded-sm"
+                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
-                </th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-1/3">Product</th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-24">SKU</th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-24">Unavailable</th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-24">Committed</th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-28">Available</th>
-                <th className="px-2 py-1 text-left font-medium text-gray-700 text-xs w-28">On Hand</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
+                </Table.Head>
+                <Table.Head className="text-xs">Product</Table.Head>
+                <Table.Head className="text-xs">SKU</Table.Head>
+                <Table.Head className="text-xs">Unavailable</Table.Head>
+                <Table.Head className="text-xs">Committed</Table.Head>
+                <Table.Head className="text-xs">Available</Table.Head>
+                <Table.Head className="text-xs">On Hand</Table.Head>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {filteredAndSortedItems.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  {/* Selection Checkbox */}
-                  <td className="px-2 py-1">
+                <tr
+                  key={item.id}
+                  className="hover:bg-gray-50 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    if (e.target.type !== 'checkbox' && e.target.type !== 'number' && !e.target.closest('button')) {
+                      handleProductClick(item)
+                    }
+                  }}
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <input
                       type="checkbox"
                       checked={selectedVariants[item.id] || false}
                       onChange={() => handleVariantSelection(item.id)}
-                      className="h-3 w-3 text-blue-600 focus:ring-blue-500 rounded-sm"
+                      className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                     />
                   </td>
-
-                  {/* Product Name & Variant */}
-                  <td className="px-2 py-1">
-                    <div 
-                      className="font-medium text-gray-900 cursor-pointer hover:text-blue-600 text-xs leading-tight"
-                      onClick={() => handleProductClick(item)}
-                    >
-                      {item.name}
-                    </div>
-                    <div className="text-xs text-gray-500 leading-tight">
-                      {item.variantName}
-                    </div>
-                  </td>
-
-                  {/* SKU */}
-                  <td className="px-2 py-1">
-                    <span className="text-xs text-gray-700 font-mono">{item.sku}</span>
-                  </td>
-
-                  {/* Unavailable with Enhanced Dropdowns */}
-                  <td className="px-2 py-1">
-                    <div className="relative">
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs font-medium text-gray-900">{item.totalUnavailable}</span>
-                        <button
-                          onClick={(e) => toggleDropdown(item.id, 'unavailable', e)}
-                          className="p-0.5 hover:bg-gray-100 rounded"
-                        >
-                          <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 flex-shrink-0">
+                        <div className="h-8 w-8 rounded bg-gray-200 flex items-center justify-center">
+                          <span className="text-xs text-gray-500">IMG</span>
+                        </div>
                       </div>
+                      <div className="ml-3">
+                        <div className="text-xs font-medium text-gray-900">
+                          {item.name}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {item.variantName} • {item.category}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <span className="text-xs font-mono text-gray-600">{item.sku}</span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="relative">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => toggleDropdown(item.id, 'unavailable', e)}
+                        className="h-8 px-2"
+                      >
+                        <span className="text-xs font-medium">{item.totalUnavailable}</span>
+                        <ChevronDownIcon className="h-3 w-3 ml-1" />
+                      </Button>
                       
                       {isDropdownOpen(item.id, 'unavailable') && (
-                        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg z-20 min-w-40">
-                          <div className="p-2 space-y-1 text-xs">
+                        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border z-20 min-w-48">
+                          <div className="p-3 space-y-2">
                             {['damaged', 'qualityControl', 'safetyStock', 'other'].map((type) => {
                               const value = item.unavailable[type] || 0
-                              const label = type === 'qualityControl' ? 'QC' : 
-                                          type === 'safetyStock' ? 'Safety' : 
+                              const label = type === 'qualityControl' ? 'Quality Control' : 
+                                          type === 'safetyStock' ? 'Safety Stock' : 
                                           type.charAt(0).toUpperCase() + type.slice(1)
                               
                               return (
-                                <div key={type} className="border-b border-gray-100 pb-1 last:border-0">
-                                  <div className="flex justify-between items-center">
-                                    <span className="text-gray-600 text-xs">{label}:</span>
-                                    <div className="flex items-center gap-1">
-                                      <span className="font-medium text-xs">{value}</span>
-                                      <button
+                                <div key={type} className="border-b border-gray-100 pb-2 last:border-0">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <span className="text-sm text-gray-600">{label}:</span>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-medium text-sm">{value}</span>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
                                         onClick={(e) => toggleDropdown(item.id, `unavailable-${type}`, e)}
-                                        className="p-0.5 hover:bg-gray-100 rounded"
+                                        className="h-6 w-6 p-0"
                                       >
-                                        <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                      </button>
+                                        <ChevronDownIcon className="h-3 w-3" />
+                                      </Button>
                                     </div>
                                   </div>
                                   
                                   {isDropdownOpen(item.id, `unavailable-${type}`) && (
-                                    <div className="bg-gray-50 p-1 rounded mt-1 space-y-1" onClick={(e) => e.stopPropagation()}>
-                                      <div className="flex gap-1">
-                                        <input
+                                    <div className="bg-gray-50 p-2 rounded space-y-2" onClick={(e) => e.stopPropagation()}>
+                                      <div className="flex gap-2">
+                                        <Input
                                           type="number"
                                           placeholder="Value"
-                                          className="w-12 p-1 text-xs border rounded"
+                                          className="h-8 text-sm"
                                           id={`${item.id}-${type}-input`}
                                           onClick={(e) => e.stopPropagation()}
                                         />
-                                        <button
+                                        <Button
+                                          size="sm"
                                           onClick={(e) => {
                                             e.stopPropagation()
                                             const input = document.getElementById(`${item.id}-${type}-input`)
                                             const newValue = parseInt(input.value) || 0
                                             handleUnavailableAction(item, type, 'change', newValue)
                                           }}
-                                          className="px-1 py-0.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                          className="h-8"
                                         >
                                           Set
-                                        </button>
+                                        </Button>
                                       </div>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleUnavailableAction(item, type, 'addToAvailable')
-                                        }}
-                                        className={`w-full text-left px-1 py-0.5 text-xs rounded ${value > 0 ? 'hover:bg-green-100 text-green-700' : 'text-gray-400 cursor-not-allowed'}`}
-                                        disabled={value === 0}
-                                      >
-                                        → Available ({value})
-                                      </button>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleUnavailableAction(item, type, 'delete')
-                                        }}
-                                        className={`w-full text-left px-1 py-0.5 text-xs rounded ${value > 0 ? 'hover:bg-red-100 text-red-700' : 'text-gray-400 cursor-not-allowed'}`}
-                                        disabled={value === 0}
-                                      >
-                                        Delete ({value})
-                                      </button>
+                                      <div className="space-y-1">
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleUnavailableAction(item, type, 'addToAvailable')
+                                          }}
+                                          disabled={value === 0}
+                                          className="w-full justify-start h-8"
+                                        >
+                                          → Available ({value})
+                                        </Button>
+                                        <Button
+                                          variant="outline"
+                                          size="sm"
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            handleUnavailableAction(item, type, 'delete')
+                                          }}
+                                          disabled={value === 0}
+                                          className="w-full justify-start h-8 text-red-600 hover:text-red-700"
+                                        >
+                                          Delete ({value})
+                                        </Button>
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -575,74 +565,71 @@ const Inventory = () => {
                       )}
                     </div>
                   </td>
-
-                  {/* Committed */}
-                  <td className="px-2 py-1">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     <div className="relative">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => toggleDropdown(item.id, 'committed', e)}
-                        className="flex items-center gap-1 text-xs hover:text-blue-600"
+                        className="h-8 px-2"
                       >
-                        <span className="font-medium">
-                          {item.committed === 0 ? '0' : item.committed}
-                        </span>
-                        <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                        <span className="text-xs font-medium">{item.committed}</span>
+                        <ChevronDownIcon className="h-3 w-3 ml-1" />
+                      </Button>
                       
                       {isDropdownOpen(item.id, 'committed') && (
-                        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg z-20 min-w-24">
-                          <div className="p-1 space-y-0.5">
-                            <div className="text-xs text-gray-600">Committed: {item.committed}</div>
-                            <button className="w-full text-left px-1 py-0.5 text-xs hover:bg-gray-50 rounded">
-                              View Orders
-                            </button>
-                            <button className="w-full text-left px-1 py-0.5 text-xs hover:bg-gray-50 rounded">
-                              Adjust
-                            </button>
+                        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border z-20 min-w-32">
+                          <div className="p-2">
+                            <div className="text-sm text-gray-600 mb-2">
+                              {item.committed === 0 ? 'No committed orders' : `${item.committed} committed`}
+                            </div>
+                            <div className="space-y-1">
+                              <Button variant="ghost" size="sm" className="w-full justify-start">
+                                View Orders
+                              </Button>
+                              <Button variant="ghost" size="sm" className="w-full justify-start">
+                                Adjust
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       )}
                     </div>
                   </td>
-
-                  {/* Available with Adjustment Dropdown */}
-                  <td className="px-2 py-1">
-                    <div className="relative flex items-center gap-0.5">
-                      <input
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="relative flex items-center gap-2">
+                      <Input
                         type="number"
                         value={editingValues[`${item.id}-available`] ?? item.stock}
                         onChange={(e) => handleValueChange(item.id, 'available', e.target.value)}
                         onBlur={() => applyFieldChange(item, 'available')}
                         onKeyPress={(e) => e.key === 'Enter' && applyFieldChange(item, 'available')}
-                        className="w-12 p-0.5 text-xs border rounded focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="w-20 h-8 text-sm"
                       />
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={(e) => toggleDropdown(item.id, 'available-actions', e)}
-                        className="p-0.5 hover:bg-gray-100 rounded"
+                        className="h-8 w-8 p-0"
                       >
-                        <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                        <EllipsisVerticalIcon className="h-4 w-4" />
+                      </Button>
                       
                       {isDropdownOpen(item.id, 'available-actions') && (
-                        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg z-20 min-w-36">
-                          <div className="p-2 space-y-1">
-                            <div className="text-xs font-medium text-gray-700 mb-1">Adjust Available</div>
-                            
-                            <div className="space-y-1">
-                              <div className="flex gap-1">
-                                <input
+                        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border z-20 min-w-64">
+                          <div className="p-3">
+                            <div className="text-sm font-medium text-gray-700 mb-3">Adjust Available</div>
+                            <div className="space-y-3">
+                              <div className="flex gap-2">
+                                <Input
                                   type="number"
-                                  placeholder="±Amt"
-                                  className="w-12 p-0.5 text-xs border rounded"
+                                  placeholder="±Amount"
+                                  className="h-8 text-sm"
                                   id={`${item.id}-available-amount`}
                                   onClick={(e) => e.stopPropagation()}
                                 />
                                 <select
-                                  className="flex-1 p-0.5 text-xs border rounded"
+                                  className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                                   id={`${item.id}-available-reason`}
                                   onClick={(e) => e.stopPropagation()}
                                 >
@@ -655,8 +642,9 @@ const Inventory = () => {
                                 </select>
                               </div>
                               
-                              <div className="flex gap-1">
-                                <button
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     const amountInput = document.getElementById(`${item.id}-available-amount`)
@@ -670,19 +658,20 @@ const Inventory = () => {
                                       reasonSelect.value = ''
                                     }
                                   }}
-                                  className="flex-1 px-1 py-0.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                  className="flex-1"
                                 >
                                   Apply
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     setOpenDropdowns({})
                                   }}
-                                  className="px-1 py-0.5 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400"
                                 >
-                                  ✕
-                                </button>
+                                  Cancel
+                                </Button>
                               </div>
                             </div>
                           </div>
@@ -690,44 +679,41 @@ const Inventory = () => {
                       )}
                     </div>
                   </td>
-
-                  {/* On Hand with Adjustment Dropdown */}
-                  <td className="px-2 py-1">
-                    <div className="relative flex items-center gap-0.5">
-                      <input
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="relative flex items-center gap-2">
+                      <Input
                         type="number"
-                        value={editingValues[`${item.id}-onhand`] ?? item.onHand}
-                        onChange={(e) => handleValueChange(item.id, 'onhand', e.target.value)}
+                        value={editingValues[`${item.id}-onHand`] ?? item.onHand}
+                        onChange={(e) => handleValueChange(item.id, 'onHand', e.target.value)}
                         onBlur={() => applyFieldChange(item, 'onHand')}
                         onKeyPress={(e) => e.key === 'Enter' && applyFieldChange(item, 'onHand')}
-                        className="w-12 p-0.5 text-xs border rounded focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                        className="w-20 h-8 text-sm"
                       />
-                      <button
-                        onClick={(e) => toggleDropdown(item.id, 'onhand-actions', e)}
-                        className="p-0.5 hover:bg-gray-100 rounded"
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => toggleDropdown(item.id, 'onHand-actions', e)}
+                        className="h-8 w-8 p-0"
                       >
-                        <svg className="w-2 h-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
+                        <EllipsisVerticalIcon className="h-4 w-4" />
+                      </Button>
                       
-                      {isDropdownOpen(item.id, 'onhand-actions') && (
-                        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg z-20 min-w-36">
-                          <div className="p-2 space-y-1">
-                            <div className="text-xs font-medium text-gray-700 mb-1">Adjust On Hand</div>
-                            
-                            <div className="space-y-1">
-                              <div className="flex gap-1">
-                                <input
+                      {isDropdownOpen(item.id, 'onHand-actions') && (
+                        <div className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border z-20 min-w-64">
+                          <div className="p-3">
+                            <div className="text-sm font-medium text-gray-700 mb-3">Adjust On Hand</div>
+                            <div className="space-y-3">
+                              <div className="flex gap-2">
+                                <Input
                                   type="number"
-                                  placeholder="±Amt"
-                                  className="w-12 p-0.5 text-xs border rounded"
-                                  id={`${item.id}-onhand-amount`}
+                                  placeholder="±Amount"
+                                  className="h-8 text-sm"
+                                  id={`${item.id}-onHand-amount`}
                                   onClick={(e) => e.stopPropagation()}
                                 />
                                 <select
-                                  className="flex-1 p-0.5 text-xs border rounded"
-                                  id={`${item.id}-onhand-reason`}
+                                  className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                                  id={`${item.id}-onHand-reason`}
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <option value="">Reason</option>
@@ -740,12 +726,13 @@ const Inventory = () => {
                                 </select>
                               </div>
                               
-                              <div className="flex gap-1">
-                                <button
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    const amountInput = document.getElementById(`${item.id}-onhand-amount`)
-                                    const reasonSelect = document.getElementById(`${item.id}-onhand-reason`)
+                                    const amountInput = document.getElementById(`${item.id}-onHand-amount`)
+                                    const reasonSelect = document.getElementById(`${item.id}-onHand-reason`)
                                     const amount = parseInt(amountInput.value) || 0
                                     const reason = reasonSelect.value
                                     
@@ -755,19 +742,20 @@ const Inventory = () => {
                                       reasonSelect.value = ''
                                     }
                                   }}
-                                  className="flex-1 px-1 py-0.5 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                  className="flex-1"
                                 >
                                   Apply
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     setOpenDropdowns({})
                                   }}
-                                  className="px-1 py-0.5 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400"
                                 >
-                                  ✕
-                                </button>
+                                  Cancel
+                                </Button>
                               </div>
                             </div>
                           </div>
@@ -777,61 +765,72 @@ const Inventory = () => {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
+            </Table.Body>
+          </Table>
         </div>
         
         {filteredAndSortedItems.length === 0 && (
-          <div className="text-center py-8 text-gray-500 text-sm">
-            <svg className="mx-auto h-8 w-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
-            </svg>
-            <h3 className="text-sm font-medium text-gray-900 mb-1">No inventory items found</h3>
-            <p className="text-xs">Try adjusting your search criteria or filters.</p>
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2 2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-2.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 009.586 13H7" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No inventory items found</h3>
+            <p className="text-gray-500">Try adjusting your search criteria or filters.</p>
           </div>
         )}
-      </div>
+      </Card>
 
-      {/* Compact Summary */}
-      <div className="bg-white p-4 rounded-xl shadow-md">
-        <h3 className="text-sm font-medium text-gray-900 mb-3">Inventory Summary</h3>
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
-          <div className="text-center">
-            <div className="text-lg font-semibold text-gray-900">{filteredAndSortedItems.length}</div>
-            <div className="text-xs text-gray-600">Total Items</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-green-600">
+      {/* Summary Cards */}
+      {/* <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-gray-900">{filteredAndSortedItems.length}</div>
+            <div className="text-sm text-gray-600">Total Items</div>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-primary-600">
               {filteredAndSortedItems.reduce((sum, item) => sum + item.stock, 0)}
             </div>
-            <div className="text-xs text-gray-600">Total Available</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-blue-600">
+            <div className="text-sm text-gray-600">Available</div>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-blue-600">
               {filteredAndSortedItems.reduce((sum, item) => sum + item.onHand, 0)}
             </div>
-            <div className="text-xs text-gray-600">On Hand</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-purple-600">
+            <div className="text-sm text-gray-600">On Hand</div>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-purple-600">
               {filteredAndSortedItems.reduce((sum, item) => sum + item.committed, 0)}
             </div>
-            <div className="text-xs text-gray-600">Committed</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-orange-600">
+            <div className="text-sm text-gray-600">Committed</div>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-orange-600">
               {filteredAndSortedItems.filter(item => item.stock > 0 && item.stock < 10).length}
             </div>
-            <div className="text-xs text-gray-600">Low Stock</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-semibold text-red-600">
+            <div className="text-sm text-gray-600">Low Stock</div>
+          </Card.Content>
+        </Card>
+        <Card>
+          <Card.Content className="p-4 text-center">
+            <div className="text-2xl font-semibold text-red-600">
               {filteredAndSortedItems.filter(item => item.stock === 0).length}
             </div>
-            <div className="text-xs text-gray-600">Out of Stock</div>
-          </div>
-        </div>
-      </div>
+            <div className="text-sm text-gray-600">Out of Stock</div>
+          </Card.Content>
+        </Card>
+      </div> */}
     </div>
   )
 }

@@ -14,6 +14,17 @@ const Card = ({ children, className = '', ...props }) => {
   )
 }
 
+const CardTitle = ({ children, className = '', ...props }) => {
+  return (
+    <h3
+      className={cn('text-lg font-semibold text-gray-900', className)}
+      {...props}
+    >
+      {children}
+    </h3>
+  )
+}
+
 const CardHeader = ({ children, className = '', ...props }) => {
   return (
     <div
@@ -45,6 +56,7 @@ const CardFooter = ({ children, className = '', ...props }) => {
 }
 
 Card.Header = CardHeader
+Card.Title = CardTitle
 Card.Content = CardContent
 Card.Footer = CardFooter
 

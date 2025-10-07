@@ -18,6 +18,8 @@ import OrderDetailPage from './pages/dashboard/orders/OrderDetailPage'
 import Settings from './pages/dashboard/settings/Settings'
 // import ChatSupportPage from './pages/dashboard/ChatBot'
 import SupportTicketSystem from './pages/dashboard/SupportTicket'
+import RFQPage from './pages/dashboard/RFQPage'
+import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
 
 
 function App() {
@@ -44,10 +46,11 @@ function App() {
             <Route path="products/:id/edit" element={<EditProduct />} />
             <Route path="products/bulk-edit" element={<BulkEditProducts />} />
             <Route path="products/:id" element={<ProductDetail />} />
-            <Route path="products/inventory" element={<Inventory />} />
+            <Route path="inventory" element={<Inventory />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
-            <Route path="rfqs" element={<div>RFQs Page</div>} />
+            <Route path="rfqs" element={<RFQPage />} />
+            <Route path="rfqs/:id" element={<RFQDetailPage />} />
             <Route path="discounts" element={<div>Discounts Page</div>} />
             <Route path="analytics" element={<div>Analytics Page</div>} />
             {/* <Route path="support" element={<ChatSupportPage />} /> */}
