@@ -30,7 +30,7 @@ const DiscountDetailsCard = ({
         <div className="inline-flex rounded-md shadow-sm border border-gray-300 overflow-hidden mb-2">
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
+            className={`h-10 px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
               formData.discountTarget === "product"
                 ? "bg-gray-200 text-gray-900"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -43,7 +43,7 @@ const DiscountDetailsCard = ({
           </button>
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
+            className={`h-10 px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
               formData.discountTarget === "order"
                 ? "bg-gray-200 text-gray-900"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -63,7 +63,7 @@ const DiscountDetailsCard = ({
         <div className="inline-flex rounded-md shadow-sm border border-gray-300 overflow-hidden mb-2">
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
+            className={`h-10 px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
               formData.method === "code"
                 ? "bg-gray-200 text-gray-900"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -76,7 +76,7 @@ const DiscountDetailsCard = ({
           </button>
           <button
             type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
+            className={`h-10 px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
               formData.method === "auto"
                 ? "bg-gray-200 text-gray-900"
                 : "bg-white text-gray-700 hover:bg-gray-50"
@@ -113,7 +113,7 @@ const DiscountDetailsCard = ({
         </label>
         <div className="flex gap-2">
           <select
-            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[120px]"
+            className="h-10 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 min-w-[120px]"
             value={formData.discountType}
             onChange={(e) => handleInputChange("discountType", e.target.value)}
           >
@@ -125,52 +125,53 @@ const DiscountDetailsCard = ({
             value={formData.discountValue}
             onChange={(e) => handleInputChange("discountValue", e.target.value)}
             placeholder="Value"
-            className="w-32"
+            className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
           />
         </div>
       </div>
       {/* Applies To - dynamic */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Applies to
-        </label>
-        <div className="inline-flex rounded-md shadow-sm border border-gray-300 overflow-hidden mb-2">
-          {(
-            appliesToOptions[formData.discountTarget] ||
-            appliesToOptions["product"]
-          ).map((opt, idx) => (
-            <button
-              key={opt.value}
-              type="button"
-              className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
-                formData.appliesTo === opt.value
-                  ? "bg-gray-200 text-gray-900"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
-              }`}
-              style={
-                idx !==
-                (
-                  appliesToOptions[formData.discountTarget] ||
-                  appliesToOptions["product"]
-                ).length -
-                  1
-                  ? { borderRight: "1px solid #e5e7eb" }
-                  : {}
-              }
-              aria-pressed={formData.appliesTo === opt.value}
-              onClick={() => handleInputChange("appliesTo", opt.value)}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-        {formData.discountTarget === "product" &&
-          formData.appliesTo !== "all" && (
+      {formData.discountTarget === "product" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Applies to
+          </label>
+          <div className="inline-flex rounded-md shadow-sm border border-gray-300 overflow-hidden mb-2">
+            {(
+              appliesToOptions[formData.discountTarget] ||
+              appliesToOptions["product"]
+            ).map((opt, idx) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={`h-10 px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
+                  formData.appliesTo === opt.value
+                    ? "bg-gray-200 text-gray-900"
+                    : "bg-white text-gray-700 hover:bg-gray-50"
+                }`}
+                style={
+                  idx !==
+                  (
+                    appliesToOptions[formData.discountTarget] ||
+                    appliesToOptions["product"]
+                  ).length -
+                    1
+                    ? { borderRight: "1px solid #e5e7eb" }
+                    : {}
+                }
+                aria-pressed={formData.appliesTo === opt.value}
+                onClick={() => handleInputChange("appliesTo", opt.value)}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {formData.appliesTo !== "all" && (
             <div className="flex items-end gap-2 mt-2 max-w-md">
               <div className="flex-1">
                 <Input
                   type="text"
                   placeholder={`Search ${formData.appliesTo}`}
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
               </div>
               <Button
@@ -182,7 +183,8 @@ const DiscountDetailsCard = ({
               </Button>
             </div>
           )}
-      </div>
+        </div>
+      )}
     </Card.Content>
   </Card>
 );
@@ -191,102 +193,67 @@ const DiscountDetailsCard = ({
 const CustomerEligibilityCard = ({ formData, handleInputChange }) => (
   <Card>
     <Card.Header>
-      <h3 className="text-lg font-medium">Customer eligibility</h3>
+      <h3 className="text-lg font-medium">Minimum purchase requirements</h3>
     </Card.Header>
-    <Card.Content className="space-y-6">
-      {/* Eligibility */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Eligibility
-        </label>
-        <div className="inline-flex rounded-md shadow-sm border border-gray-300 overflow-hidden mb-2">
-          <button
-            type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
-              formData.eligibility === "all"
-                ? "bg-gray-200 text-gray-900"
-                : "bg-white text-gray-700 hover:bg-gray-50"
-            }`}
-            style={{ borderRight: "1px solid #e5e7eb" }}
-            aria-pressed={formData.eligibility === "all"}
-            onClick={() => handleInputChange("eligibility", "all")}
-          >
-            All customers
-          </button>
-          <button
-            type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
-              formData.eligibility === "segments"
-                ? "bg-gray-200 text-gray-900"
-                : "bg-white text-gray-700 hover:bg-gray-50"
-            }`}
-            style={{ borderRight: "1px solid #e5e7eb" }}
-            aria-pressed={formData.eligibility === "segments"}
-            onClick={() => handleInputChange("eligibility", "segments")}
-          >
-            Specific customer segments
-          </button>
-          <button
-            type="button"
-            className={`px-4 py-2 text-sm font-medium focus:outline-none transition-colors ${
-              formData.eligibility === "specific"
-                ? "bg-gray-200 text-gray-900"
-                : "bg-white text-gray-700 hover:bg-gray-50"
-            }`}
-            aria-pressed={formData.eligibility === "specific"}
-            onClick={() => handleInputChange("eligibility", "specific")}
-          >
-            Specific customers
-          </button>
+    <Card.Content>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-3">
+          <input
+            type="radio"
+            name="minRequirement"
+            checked={formData.minRequirement === "none"}
+            onChange={() => handleInputChange("minRequirement", "none")}
+            className="accent-primary-600"
+          />
+          <span className=" text-gray-700">No minimum requirements</span>
         </div>
-      </div>
-      {/* Minimum Purchase Requirements */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Minimum purchase requirements
-        </label>
-        <div className="space-y-2">
-          <label className="flex items-center gap-2">
-            <input
-              type="radio"
-              name="minRequirement"
-              checked={formData.minRequirement === "none"}
-              onChange={() => handleInputChange("minRequirement", "none")}
-            />{" "}
-            No minimum requirements
-          </label>
-          <label className="flex items-center gap-2">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
             <input
               type="radio"
               name="minRequirement"
               checked={formData.minRequirement === "amount"}
               onChange={() => handleInputChange("minRequirement", "amount")}
-            />{" "}
-            Minimum purchase amount (₹)
-            <Input
-              type="number"
-              value={formData.minAmount}
-              onChange={(e) => handleInputChange("minAmount", e.target.value)}
-              className="w-32"
-              placeholder="0"
+              className="accent-primary-600"
             />
-          </label>
-          <label className="flex items-center gap-2">
+            <span className=" text-gray-700">Minimum purchase amount (₹)</span>
+          </div>
+          {formData.minRequirement === "amount" && (
+            <div className="mt-2 ml-6">
+              <Input
+                type="number"
+                value={formData.minAmount}
+                onChange={(e) => handleInputChange("minAmount", e.target.value)}
+                className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
+                placeholder="0"
+              />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
             <input
               type="radio"
               name="minRequirement"
               checked={formData.minRequirement === "quantity"}
               onChange={() => handleInputChange("minRequirement", "quantity")}
-            />{" "}
-            Minimum quantity of items
-            <Input
-              type="number"
-              value={formData.minQuantity}
-              onChange={(e) => handleInputChange("minQuantity", e.target.value)}
-              className="w-32"
-              placeholder="0"
+              className="accent-primary-600"
             />
-          </label>
+            <span className=" text-gray-700">Minimum quantity of items</span>
+          </div>
+          {formData.minRequirement === "quantity" && (
+            <div className="mt-2 ml-6">
+              <Input
+                type="number"
+                value={formData.minQuantity}
+                onChange={(e) =>
+                  handleInputChange("minQuantity", e.target.value)
+                }
+                className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
+                placeholder="0"
+              />
+            </div>
+          )}
         </div>
       </div>
     </Card.Content>
@@ -302,9 +269,6 @@ const UsageLimitsCard = ({ formData, handleInputChange }) => (
     <Card.Content className="space-y-6">
       {/* Maximum Discount Uses */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Maximum discount uses
-        </label>
         <div className="space-y-2">
           <label className="flex items-center gap-2">
             <input
@@ -314,6 +278,20 @@ const UsageLimitsCard = ({ formData, handleInputChange }) => (
             />{" "}
             Limit number of times this discount can be used in total
           </label>
+          {formData.maxUses && (
+            <div className="mt-2 ml-6">
+              <Input
+                type="number"
+                value={formData.maxUsesCount || ""}
+                onChange={(e) =>
+                  handleInputChange("maxUsesCount", e.target.value)
+                }
+                className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
+                placeholder="Enter number of times"
+                min={1}
+              />
+            </div>
+          )}
           <label className="flex items-center gap-2">
             <input
               type="checkbox"
@@ -326,11 +304,18 @@ const UsageLimitsCard = ({ formData, handleInputChange }) => (
           </label>
         </div>
       </div>
+    </Card.Content>
+  </Card>
+);
+
+const Combinations = ({ formData, handleInputChange }) => (
+  <Card>
+    <Card.Header>
+      <h3 className="text-lg font-medium">Combinations</h3>
+    </Card.Header>
+    <Card.Content className="space-y-6">
       {/* Combinations */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Combinations
-        </label>
         <div className="space-y-2">
           <label className="flex items-center gap-2">
             <input
@@ -384,13 +369,13 @@ const ActiveDatesCard = ({ formData, handleInputChange }) => (
             type="date"
             value={formData.startDate}
             onChange={(e) => handleInputChange("startDate", e.target.value)}
-            className="w-40"
+            className="h-10 w-40 px-3 py-2 text-sm rounded-lg"
           />
           <Input
             type="time"
             value={formData.startTime}
             onChange={(e) => handleInputChange("startTime", e.target.value)}
-            className="w-32"
+            className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
           />
         </div>
       </div>
@@ -409,13 +394,13 @@ const ActiveDatesCard = ({ formData, handleInputChange }) => (
               type="date"
               value={formData.endDate}
               onChange={(e) => handleInputChange("endDate", e.target.value)}
-              className="w-40"
+              className="h-10 w-40 px-3 py-2 text-sm rounded-lg"
             />
             <Input
               type="time"
               value={formData.endTime}
               onChange={(e) => handleInputChange("endTime", e.target.value)}
-              className="w-32"
+              className="h-10 w-32 px-3 py-2 text-sm rounded-lg"
             />
           </div>
         )}
@@ -505,9 +490,18 @@ const EditDiscount = () => {
 
   useEffect(() => {
     if (discount) {
-      // Ensure combinations is always present with default keys
+      // Set defaults for choice inputs if not present
       setFormData({
         ...discount,
+        discountTarget: discount.discountTarget || "product",
+        method: discount.method || "code",
+        discountType: discount.discountType || "percentage",
+        appliesTo:
+          discount.appliesTo === "collections"
+            ? "products"
+            : discount.appliesTo || "products",
+        eligibility: discount.eligibility || "all",
+        minRequirement: discount.minRequirement || "none",
         combinations: {
           product: discount.combinations?.product ?? false,
           order: discount.combinations?.order ?? false,
@@ -522,7 +516,6 @@ const EditDiscount = () => {
 
   const appliesToOptions = {
     product: [
-      { value: "collections", label: "Specific collections" },
       { value: "products", label: "Specific products" },
       { value: "all", label: "All products" },
     ],
@@ -597,6 +590,10 @@ const EditDiscount = () => {
             formData={formData}
             handleInputChange={handleInputChange}
           />
+          <Combinations
+            formData={formData}
+            handleInputChange={handleInputChange}
+          />
           <ActiveDatesCard
             formData={formData}
             handleInputChange={handleInputChange}
@@ -605,10 +602,10 @@ const EditDiscount = () => {
         {/* Right Column - Sidebar */}
         <div className="lg:col-span-1 space-y-6">
           <DiscountSummaryCard formData={formData} />
-          <SalesChannelCard
+          {/* <SalesChannelCard
             formData={formData}
             handleInputChange={handleInputChange}
-          />
+          /> */}
         </div>
       </div>
     </>

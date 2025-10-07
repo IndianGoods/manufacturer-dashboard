@@ -86,37 +86,29 @@ const AnalyticsDashboard: React.FC = () => {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Breadcrumbs */}
-        <Breadcrumbs items={[{ name: "Analytics", href: "/dashboard/analytics" }]} />
+        <Breadcrumbs
+          items={[{ name: "Analytics", href: "/dashboard/analytics" }]}
+        />
 
         {/* Header Section */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                <span className="inline-block">
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                    <path
-                      d="M3 17V7m7 10V3m7 14v-6"
-                      stroke="#222"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </span>
-                Analytics
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
             </div>
             <div className="flex items-center gap-2">
               <select
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none"
                 value={selectedDateRange}
-                onChange={e => setSelectedDateRange(e.target.value)}
+                onChange={(e) => setSelectedDateRange(e.target.value)}
               >
-                {dateRanges.map(r => (
-                  <option key={r} value={r}>{r}</option>
+                {dateRanges.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
                 ))}
               </select>
               <div className="flex items-center gap-1 px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm text-gray-700">
@@ -124,7 +116,7 @@ const AnalyticsDashboard: React.FC = () => {
                 <input
                   type="date"
                   value={selectedDay}
-                  onChange={e => setSelectedDay(e.target.value)}
+                  onChange={(e) => setSelectedDay(e.target.value)}
                   className="bg-transparent outline-none border-none text-gray-700"
                   style={{ width: 120 }}
                 />
