@@ -1,247 +1,175 @@
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  ShoppingBagIcon,
-  ClipboardDocumentListIcon,
-  CurrencyDollarIcon,
-  UserGroupIcon,
-  ArrowUpIcon,
-  ArrowDownIcon,
-} from "@heroicons/react/24/outline";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
-import {
-  setOverview,
-  setSalesData,
-  setTopProducts,
-  setRecentActivity,
-} from "../../store/slices/analyticsSlice";
-import { mockAnalytics } from "../../data/orderMockData";
-import Card from "../../components/ui/Card";
-import Badge from "../../components/ui/Badge";
 import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import { formatCurrency, formatDate } from "../../utils/helpers";
+import Card from "../../components/ui/Card";
+import { PlusIcon, ShoppingBagIcon, ClipboardDocumentListIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
 
-const StatCard = ({ title, value, change, changeType, icon: Icon }) => {
-  const isPositive = changeType === "positive";
-
-  return (
-    <Card>
-      <Card.Content className="p-6">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <Icon className="h-8 w-8 text-gray-400" />
-          </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">
-                {title}
-              </dt>
-              <dd className="flex items-baseline">
-                <div className="text-2xl font-semibold text-gray-900">
-                  {value}
-                </div>
-                {change && (
-                  <div
-                    className={`ml-2 flex items-baseline text-sm font-semibold ${
-                      isPositive ? "text-green-600" : "text-red-600"
-                    }`}
-                  >
-                    {isPositive ? (
-                      <ArrowUpIcon className="self-center flex-shrink-0 h-4 w-4" />
-                    ) : (
-                      <ArrowDownIcon className="self-center flex-shrink-0 h-4 w-4" />
-                    )}
-                    <span className="sr-only">
-                      {isPositive ? "Increased" : "Decreased"} by
-                    </span>
-                    {change}
-                  </div>
-                )}
-              </dd>
-            </dl>
-          </div>
-        </div>
-      </Card.Content>
-    </Card>
-  );
-};
+const quickActions = [
+  {
+    title: "Create Product",
+    description: "Add a new product to your catalog.",
+    icon: ShoppingBagIcon,
+    href: "/dashboard/products/create",
+  },
+  {
+    title: "Create Order",
+    description: "Start a new order for a customer.",
+    icon: ClipboardDocumentListIcon,
+    href: "/dashboard/orders/create",
+  },
+  {
+    title: "Manage Inventory",
+    description: "View and update your inventory levels.",
+    icon: Cog6ToothIcon,
+    href: "/dashboard/inventory",
+  },
+];
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const { overview, salesData, topProducts, recentActivity } = useSelector(
-    (state) => state.analytics
-  );
-
-  useEffect(() => {
-    // Load mock data
-    dispatch(setOverview(mockAnalytics.overview));
-    dispatch(setSalesData(mockAnalytics.salesData));
-    dispatch(setTopProducts(mockAnalytics.topProducts));
-    dispatch(setRecentActivity(mockAnalytics.recentActivity));
-  }, [dispatch]);
-
+  // Get user name
+  const user = useSelector(state => state.auth?.user);
+  const name = user?.name || "User";
   const breadcrumbItems = [{ name: "Dashboard" }];
 
-  const stats = [
-    {
-      title: "Total Sales",
-      value: formatCurrency(overview.totalSales),
-      change: "+12.5%",
-      changeType: "positive",
-      icon: CurrencyDollarIcon,
-    },
-    {
-      title: "Total Orders",
-      value: overview.totalOrders?.toLocaleString(),
-      change: "+8.2%",
-      changeType: "positive",
-      icon: ClipboardDocumentListIcon,
-    },
-    {
-      title: "Average Order Value",
-      value: formatCurrency(overview.averageOrderValue),
-      change: "+4.1%",
-      changeType: "positive",
-      icon: ShoppingBagIcon,
-    },
-    {
-      title: "Total Customers",
-      value: overview.totalCustomers?.toLocaleString(),
-      change: "+15.3%",
-      changeType: "positive",
-      icon: UserGroupIcon,
-    },
+  // Example analytics summary cards (can be replaced with real data)
+  const summaryCards = [
+    { title: "Gross sales", value: "₹42,500", subtitle: "+12% from last week" },
+    { title: "Orders", value: "1,250", subtitle: "+8% from last week" },
+    { title: "Avg order value", value: "₹34.00", subtitle: "+3% from last week" },
+    { title: "Products sold", value: "3,800", subtitle: "+5% from last week" },
   ];
 
   return (
-    <div>
-      <Breadcrumbs items={breadcrumbItems} />
+    <div className="bg-gray-50 min-h-screen font-sans">
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <Breadcrumbs items={breadcrumbItems} />
 
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Welcome back! Here's what's happening with your store today.
-        </p>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        {stats.map((stat) => (
-          <StatCard key={stat.title} {...stat} />
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        {/* Sales Chart */}
-        <Card>
-          <Card.Header>
-            <h3 className="text-lg font-medium text-gray-900">
-              Sales Overview
-            </h3>
-            <p className="text-sm text-gray-500">Last 7 days</p>
-          </Card.Header>
-          <Card.Content>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={salesData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="date"
-                    tickFormatter={(value) => formatDate(value)}
-                  />
-                  <YAxis tickFormatter={(value) => `$${value}`} />
-                  <Tooltip
-                    labelFormatter={(value) => formatDate(value)}
-                    formatter={(value) => [formatCurrency(value), "Sales"]}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="sales"
-                    stroke="#0743ba"
-                    strokeWidth={2}
-                    dot={{ fill: "#0743ba" }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+        {/* Top: Recent Activity Cards */}
+        <div className="flex flex-wrap gap-6 mb-8">
+          {summaryCards.map((card, idx) => (
+            <div key={card.title} className="flex-1 min-w-[180px] bg-white rounded-xl px-6 py-5 shadow border border-gray-100 flex flex-col justify-center items-start">
+              <div className="flex items-center gap-2 mb-2">
+                {idx === 0 && <ShoppingBagIcon className="h-6 w-6 text-gray-400" />}
+                {idx === 1 && <ClipboardDocumentListIcon className="h-6 w-6 text-gray-400" />}
+                {idx === 2 && <Cog6ToothIcon className="h-6 w-6 text-gray-400" />}
+                {idx === 3 && <PlusIcon className="h-6 w-6 text-gray-400" />}
+                <span className="text-base font-medium text-gray-700">{card.title}</span>
+              </div>
+              <div className="text-xl font-normal text-gray-900">{card.value}</div>
+              <div className="text-xs text-green-600 mt-1">{card.subtitle}</div>
             </div>
-          </Card.Content>
-        </Card>
+          ))}
+        </div>
 
-        {/* Top Products */}
-        <Card>
-          <Card.Header>
-            <h3 className="text-lg font-medium text-gray-900">Top Products</h3>
-            <p className="text-sm text-gray-500">By sales this month</p>
-          </Card.Header>
-          <Card.Content>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={topProducts} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" tickFormatter={(value) => `$${value}`} />
-                  <YAxis dataKey="name" type="category" width={120} />
-                  <Tooltip
-                    formatter={(value) => [formatCurrency(value), "Sales"]}
-                  />
-                  <Bar dataKey="sales" fill="#0743ba" />
-                </BarChart>
-              </ResponsiveContainer>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Middle: Sales Summary */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-6 mb-8">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-medium text-gray-900">Total Sales</h2>
+                <button className="px-4 py-2 bg-gray-100 rounded text-gray-700 text-xs font-normal border border-gray-200">Download PDF</button>
+              </div>
+              <div className="flex gap-8 mb-6">
+                <div>
+                  <div className="text-xl font-normal text-gray-900">239</div>
+                  <div className="text-xs text-gray-500">New Orders</div>
+                </div>
+                <div>
+                  <div className="text-xl font-normal text-gray-900">₹3,499.00</div>
+                  <div className="text-xs text-gray-500">Revenue February</div>
+                </div>
+                <div>
+                  <div className="text-xl font-normal text-gray-900">₹2,168.00</div>
+                  <div className="text-xs text-gray-500">Average Revenue</div>
+                </div>
+              </div>
+              {/* Simple Chart Placeholder (removed if not functional) */}
+              <div className="bg-gray-50 rounded h-32 flex items-center justify-center">
+                <span className="text-gray-400 text-xs">(Chart coming soon)</span>
+              </div>
             </div>
-          </Card.Content>
-        </Card>
-      </div>
 
-      {/* Recent Activity */}
-      <Card>
-        <Card.Header>
-          <h3 className="text-lg font-medium text-gray-900">Recent Activity</h3>
-        </Card.Header>
-        <Card.Content>
-          <div className="flow-root">
-            <ul className="-mb-8">
-              {recentActivity.map((activity, index) => (
-                <li key={activity.id}>
-                  <div className="relative pb-8">
-                    {index !== recentActivity.length - 1 && (
-                      <span
-                        className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div className="relative flex space-x-3">
-                      <div>
-                        <span className="h-8 w-8 rounded-full bg-gray-400 flex items-center justify-center ring-8 ring-white">
-                          <div className="h-2 w-2 bg-white rounded-full" />
-                        </span>
-                      </div>
-                      <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                        <div>
-                          <p className="text-sm text-gray-500">
-                            {activity.message}
-                          </p>
-                        </div>
-                        <div className="text-right text-sm whitespace-nowrap text-gray-500">
-                          {formatDate(activity.timestamp)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            {/* Order List Table - styled like Discounts.jsx */}
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-0">
+              <div className="flex gap-6 px-6 pt-6 mb-4">
+                <button className="text-sm font-medium text-primary-700 border-b-2 border-primary-700 pb-1">Checkout</button>
+                <button className="text-sm font-medium text-gray-400 pb-1">On Process</button>
+                <button className="text-sm font-medium text-gray-400 pb-1">On Delivery</button>
+              </div>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-50 text-gray-500 text-left">
+                    <th className="py-3 px-6 font-medium">No</th>
+                    <th className="py-3 px-6 font-medium">Order ID</th>
+                    <th className="py-3 px-6 font-medium">Orderer Name</th>
+                    <th className="py-3 px-6 font-medium">Date</th>
+                    <th className="py-3 px-6 font-medium">Cost</th>
+                    <th className="py-3 px-6 font-medium">Shipping Cost</th>
+                    <th className="py-3 px-6 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-t hover:bg-gray-50">
+                    <td className="py-3 px-6">1</td>
+                    <td className="py-3 px-6">#27382929</td>
+                    <td className="py-3 px-6">Nelson Mandel</td>
+                    <td className="py-3 px-6">10 Feb 2022</td>
+                    <td className="py-3 px-6">$280.00</td>
+                    <td className="py-3 px-6">$10.00</td>
+                    <td className="py-3 px-6"><span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">Pending</span></td>
+                  </tr>
+                  <tr className="border-t hover:bg-gray-50">
+                    <td className="py-3 px-6">2</td>
+                    <td className="py-3 px-6">#2738182</td>
+                    <td className="py-3 px-6">Hanivan Muhammad</td>
+                    <td className="py-3 px-6">10 Feb 2022</td>
+                    <td className="py-3 px-6">$180.00</td>
+                    <td className="py-3 px-6">$20.00</td>
+                    <td className="py-3 px-6"><span className="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs">Pending</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </Card.Content>
-      </Card>
+
+          {/* Right: Visitors & Shipping */}
+          <div className="flex flex-col gap-8">
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
+              <h2 className="text-base font-medium text-gray-900 mb-2">Visitors</h2>
+              <div className="text-xl font-normal text-gray-900 mb-1">43,292 <span className="text-xs text-green-600">+2.4%</span></div>
+              {/* Simple Chart Placeholder (removed if not functional) */}
+              <div className="bg-gray-50 rounded h-20 flex items-center justify-center mb-4">
+                <span className="text-gray-400 text-xs">(Chart coming soon)</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex flex-col items-center">
+                  <span className="text-xs text-gray-500">Order Target</span>
+                  <span className="text-base font-medium text-primary-700">1,239</span>
+                  <span className="text-xs text-gray-400">70% of target</span>
+                </div>
+                <div>
+                  <svg width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="28" stroke="#E5E7EB" strokeWidth="4" fill="none" /><circle cx="30" cy="30" r="28" stroke="#3B82F6" strokeWidth="4" fill="none" strokeDasharray="175" strokeDashoffset="52" /></svg>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow border border-gray-100 p-6">
+              <h2 className="text-base font-medium text-gray-900 mb-2">Upcoming Shipping</h2>
+              <div className="mb-3 flex items-center gap-2 text-sm">
+                <span className="font-medium text-gray-700">Order ID</span>
+                <span className="px-2 py-1 rounded bg-gray-100 text-gray-500">#27382929</span>
+                <span className="text-green-600">Delivery</span>
+                <span className="text-gray-400">10 Feb 2022</span>
+              </div>
+              <div className="mb-3 flex items-center gap-2 text-sm">
+                <span className="font-medium text-gray-700">Order ID</span>
+                <span className="px-2 py-1 rounded bg-gray-100 text-gray-500">#14818929</span>
+                <span className="text-green-600">Delivery</span>
+                <span className="text-gray-400">15 Feb 2022</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
