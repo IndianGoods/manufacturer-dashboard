@@ -408,24 +408,39 @@ const Orders = () => {
           <div className="border-b border-gray-200">
             <div className="flex items-center justify-between px-6 py-4">
               <nav className="-mb-px flex space-x-8">
-                {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => handleTabChange(tab.id)}
-                    className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
-                      activeTab === tab.id
-                        ? "border-primary-500 text-primary-600"
-                        : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                    }`}
-                  >
-                    {tab.name}
-                    {tab.count > 0 && (
-                      <span className="ml-2 py-0.5 px-2 text-xs bg-gray-100 text-gray-600 rounded-full">
+                {tabs.map((tab) => {
+                  const visuallyDisabled = tab.count === 0;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => handleTabChange(tab.id)}
+                      tabIndex={visuallyDisabled ? -1 : 0}
+                      className={`whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm ${
+                        activeTab === tab.id
+                          ? "border-primary-500 text-primary-600"
+                          : visuallyDisabled
+                          ? "border-transparent text-gray-300"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 cursor-pointer"
+                      }`}
+                      style={
+                        visuallyDisabled
+                          ? { pointerEvents: "none", cursor: "default" }
+                          : {}
+                      }
+                    >
+                      {tab.name}
+                      <span
+                        className={`ml-2 py-0.5 px-2 text-xs rounded-full ${
+                          tab.count > 0
+                            ? "bg-gray-100 text-gray-600"
+                            : "bg-gray-50 text-gray-300"
+                        }`}
+                      >
                         {tab.count}
                       </span>
-                    )}
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
               </nav>
 
               <div className="flex items-center space-x-2">

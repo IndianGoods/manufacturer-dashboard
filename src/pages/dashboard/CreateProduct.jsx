@@ -17,9 +17,74 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import Card from "../../components/ui/Card";
 
+// Sortable grid for images (main image upload area)
+function ImageSortableGrid({ images, setImages, removeImage }) {
+  const dragItem = useRef();
+  const dragOverItem = useRef();
+
+  const handleDragStart = (index) => {
+    dragItem.current = index;
+  };
+
+  const handleDragEnter = (index) => {
+    dragOverItem.current = index;
+  };
+
+  const handleDragEnd = () => {
+    const from = dragItem.current;
+    const to = dragOverItem.current;
+    if (from === undefined || to === undefined || from === to) return;
+    const updated = [...images];
+    const [moved] = updated.splice(from, 1);
+    updated.splice(to, 0, moved);
+    setImages(updated);
+    dragItem.current = undefined;
+    dragOverItem.current = undefined;
+  };
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {images.map((image, index) => (
+        <div
+          key={image.id}
+          className="relative group"
+          draggable
+          onDragStart={() => handleDragStart(index)}
+          onDragEnter={() => handleDragEnter(index)}
+          onDragEnd={handleDragEnd}
+          onDragOver={(e) => e.preventDefault()}
+          style={{ cursor: "grab" }}
+        >
+          <div className="w-full h-24 rounded-lg overflow-hidden border border-gray-200">
+            <img
+              src={image.url}
+              alt={`Upload ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => removeImage(image.id)}
+            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+          >
+            <XMarkIcon className="w-4 h-4" />
+          </button>
+          {index === 0 && (
+            <span className="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
+              Main
+            </span>
+          )}
+          <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-white bg-opacity-80 rounded px-1 pointer-events-none">Drag</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // Move components outside to prevent re-rendering
 const ImageUploadArea = ({
   uploadedImages,
+  setUploadedImages,
   handleMainImageUpload,
   removeMainImage,
 }) => (
@@ -30,56 +95,34 @@ const ImageUploadArea = ({
     <Card.Content>
       <div className="space-y-4">
         {/* Upload Area */}
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+        <label htmlFor="file-upload" className="block cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors relative">
           <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
           <div className="mt-4">
-            <label htmlFor="file-upload" className="cursor-pointer">
-              <span className="mt-2 block text-sm font-medium text-gray-900">
-                Add images, or drag and drop
-              </span>
-              <span className="mt-1 block text-xs text-gray-500">
-                JPG, PNG, WEBP, or GIF
-              </span>
-              <input
-                id="file-upload"
-                name="file-upload"
-                type="file"
-                className="sr-only"
-                multiple
-                accept="image/*"
-                onChange={handleMainImageUpload}
-              />
-            </label>
+            <span className="mt-2 block text-sm font-medium text-gray-900">
+              Add images, or drag and drop
+            </span>
+            <span className="mt-1 block text-xs text-gray-500">
+              JPG, PNG, WEBP, or GIF
+            </span>
           </div>
-        </div>
+          <input
+            id="file-upload"
+            name="file-upload"
+            type="file"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            multiple
+            accept="image/*"
+            onChange={handleMainImageUpload}
+          />
+        </label>
 
-        {/* Image Previews */}
+        {/* Image Previews with drag-and-drop */}
         {uploadedImages.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {uploadedImages.map((image, index) => (
-              <div key={image.id} className="relative group">
-                <div className="w-full h-24 rounded-lg overflow-hidden border border-gray-200">
-                  <img
-                    src={image.url}
-                    alt={`Upload ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => removeMainImage(image.id)}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-                {index === 0 && (
-                  <span className="absolute bottom-2 left-2 bg-black bg-opacity-75 text-white text-xs px-2 py-1 rounded">
-                    Main
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+          <ImageSortableGrid
+            images={uploadedImages}
+            setImages={setUploadedImages}
+            removeImage={removeMainImage}
+          />
         )}
       </div>
     </Card.Content>
@@ -109,6 +152,7 @@ const ProductDetailsCard = ({
         onChange={(e) => handleInputChange("title", e.target.value)}
         placeholder="Product title"
         required
+        className="h-10 px-3 py-2 text-sm rounded-lg"
       />
 
       {/* Category Selection */}
@@ -123,7 +167,7 @@ const ProductDetailsCard = ({
               handleInputChange("category", e.target.value);
               handleInputChange("subCategory", ""); // Reset subcategory when category changes
             }}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            className="h-10 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="">Select category</option>
             {Object.keys(categories).map((category) => (
@@ -142,7 +186,7 @@ const ProductDetailsCard = ({
             value={formData.subCategory}
             onChange={(e) => handleInputChange("subCategory", e.target.value)}
             disabled={!formData.category}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100"
+            className="h-10 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 disabled:bg-gray-100"
           >
             <option value="">Select sub-category</option>
             {formData.category &&
@@ -160,6 +204,7 @@ const ProductDetailsCard = ({
         value={formData.sku}
         onChange={(e) => handleInputChange("sku", e.target.value)}
         placeholder="Stock Keeping Unit"
+        className="h-10 px-3 py-2 text-sm rounded-lg"
       />
 
       <div>
@@ -206,21 +251,19 @@ const ProductDetailsCard = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tags
-        </label>
-        <div className="border border-gray-300 rounded-lg p-2 min-h-[42px] focus-within:ring-1 focus-within:ring-primary-500 focus-within:border-primary-500">
-          <div className="flex flex-wrap gap-2 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+        <div className="border border-gray-300 rounded-md px-2 py-1 min-h-[32px] focus-within:ring-1 focus-within:ring-primary-500 focus-within:border-primary-500 bg-white">
+          <div className="flex flex-wrap gap-1 mb-1">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => removeTag(tag)}
-                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none"
+                  className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none"
                 >
                   <XMarkIcon className="w-3 h-3" />
                 </button>
@@ -243,12 +286,10 @@ const ProductDetailsCard = ({
                 ? "e.g. wholesale, bulk, industrial"
                 : "Add another tag..."
             }
-            className="w-full border-0 outline-none text-sm placeholder-gray-400"
+            className="h-8 w-full border-0 outline-none text-sm placeholder-gray-400 px-2 py-1 rounded-md"
           />
         </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Press Enter or comma to add tags
-        </p>
+        <p className="mt-1 text-xs text-gray-400">Press Enter or comma to add tags</p>
       </div>
     </Card.Content>
   </Card>
@@ -268,6 +309,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             handleInputChange("material", e.target.value, "specifications")
           }
           placeholder="e.g. Cotton, Steel, Plastic"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -277,6 +319,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             handleInputChange("modelNumber", e.target.value, "specifications")
           }
           placeholder="Model number"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -286,6 +329,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             handleInputChange("packing", e.target.value, "specifications")
           }
           placeholder="Packing details"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -296,6 +340,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             handleInputChange("moq", e.target.value, "specifications")
           }
           placeholder="Minimum order quantity"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -305,6 +350,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             handleInputChange("package", e.target.value, "specifications")
           }
           placeholder="Package type"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -318,6 +364,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             )
           }
           placeholder="e.g. 10x5x2 cm"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -331,6 +378,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             )
           }
           placeholder="e.g. 0.5 kg"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <Input
@@ -344,6 +392,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             )
           }
           placeholder="e.g. 3+ years"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
         <div>
@@ -355,7 +404,7 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
             onChange={(e) =>
               handleInputChange("gender", e.target.value, "specifications")
             }
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+            className="h-10 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="">Select gender</option>
             <option value="unisex">Unisex</option>
@@ -384,6 +433,25 @@ const PricingCard = ({
       <h3 className="text-lg font-medium">Pricing</h3>
     </Card.Header>
     <Card.Content className="space-y-4">
+      {/* Variants Toggle - moved to top */}
+      <div>
+        <div className="flex items-center space-x-2 mb-4">
+          <input
+            type="checkbox"
+            id="has-variants"
+            checked={formData.hasVariants}
+            onChange={(e) => handleInputChange("hasVariants", e.target.checked)}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="has-variants"
+            className="text-sm font-medium text-gray-700"
+          >
+            This product has multiple options, like different sizes or colors
+          </label>
+        </div>
+      </div>
+
       {/* Base Product Pricing (when no variants) */}
       {!formData.hasVariants && (
         <div className="space-y-4">
@@ -396,14 +464,18 @@ const PricingCard = ({
               onChange={(e) => handleInputChange("price", e.target.value)}
               placeholder="0.00"
               required
+              className="h-10 px-3 py-2 text-sm rounded-lg"
             />
             <Input
               label="Compare at Price"
               type="number"
               step="0.01"
               value={formData.compareAtPrice}
-              onChange={(e) => handleInputChange("compareAtPrice", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("compareAtPrice", e.target.value)
+              }
               placeholder="0.00"
+              className="h-10 px-3 py-2 text-sm rounded-lg"
             />
             <Input
               label="MRP"
@@ -412,6 +484,7 @@ const PricingCard = ({
               value={formData.mrp}
               onChange={(e) => handleInputChange("mrp", e.target.value)}
               placeholder="0.00"
+              className="h-10 px-3 py-2 text-sm rounded-lg"
             />
             <Input
               label="Cost per item"
@@ -420,9 +493,10 @@ const PricingCard = ({
               value={formData.cost}
               onChange={(e) => handleInputChange("cost", e.target.value)}
               placeholder="0.00"
+              className="h-10 px-3 py-2 text-sm rounded-lg"
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="Stock Quantity"
@@ -431,209 +505,206 @@ const PricingCard = ({
               onChange={(e) => handleInputChange("stock", e.target.value)}
               placeholder="0"
               required
+              className="h-10 px-3 py-2 text-sm rounded-lg"
             />
             <div></div>
           </div>
         </div>
       )}
 
-      {/* Variants Toggle */}
-      <div className="border-t pt-4">
-        <div className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            id="has-variants"
-            checked={formData.hasVariants}
-            onChange={(e) => handleInputChange("hasVariants", e.target.checked)}
-            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-          />
-          <label htmlFor="has-variants" className="text-sm font-medium text-gray-700">
-            This product has multiple options, like different sizes or colors
-          </label>
-        </div>
-      </div>
-
       {/* Variants Section */}
       {formData.hasVariants && (
         <div className="space-y-4">
           {formData.variants.map((variant, index) => (
-        <div
-          key={index}
-          className="border border-gray-200 rounded-lg p-4 space-y-4"
-        >
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-gray-900">
-              {variant.size && variant.color
-                ? `${variant.size} / ${variant.color}`
-                : `Variant ${index + 1}`}
-            </h4>
-            {formData.variants.length > 1 && (
-              <button
-                type="button"
-                onClick={() => removeVariant(index)}
-                className="text-red-600 hover:text-red-700 text-sm"
-              >
-                Remove
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Size"
-              value={variant.size}
-              onChange={(e) =>
-                handleVariantChange(index, "size", e.target.value)
-              }
-              placeholder="e.g. S, M, L, XL"
-            />
-
-            <Input
-              label="Color"
-              value={variant.color}
-              onChange={(e) =>
-                handleVariantChange(index, "color", e.target.value)
-              }
-              placeholder="e.g. Red, Blue, Black"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="Price"
-              type="number"
-              step="0.01"
-              value={variant.price}
-              onChange={(e) =>
-                handleVariantChange(index, "price", e.target.value)
-              }
-              placeholder="0.00"
-            />
-
-            <Input
-              label="Compare at Price"
-              type="number"
-              step="0.01"
-              value={variant.compareAtPrice}
-              onChange={(e) =>
-                handleVariantChange(index, "compareAtPrice", e.target.value)
-              }
-              placeholder="0.00"
-            />
-
-            <Input
-              label="MRP"
-              type="number"
-              step="0.01"
-              value={variant.mrp}
-              onChange={(e) =>
-                handleVariantChange(index, "mrp", e.target.value)
-              }
-              placeholder="0.00"
-            />
-
-            <Input
-              label="Cost per item"
-              type="number"
-              step="0.01"
-              value={variant.cost}
-              onChange={(e) =>
-                handleVariantChange(index, "cost", e.target.value)
-              }
-              placeholder="0.00"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              label="SKU"
-              value={variant.sku}
-              onChange={(e) =>
-                handleVariantChange(index, "sku", e.target.value)
-              }
-              placeholder="SKU"
-            />
-
-            <Input
-              label="Barcode"
-              value={variant.barcode}
-              onChange={(e) =>
-                handleVariantChange(index, "barcode", e.target.value)
-              }
-              placeholder="Barcode"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Variant Images
-            </label>
-            <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
-              <CameraIcon className="mx-auto h-8 w-8 text-gray-400" />
-              <p className="mt-2 text-sm text-gray-600">
-                Drop files here or click to upload
-              </p>
-              <p className="text-xs text-gray-500">
-                Supports JPG, PNG, GIF up to 10MB
-              </p>
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => handleVariantImageUpload(index, e)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-            </div>
-
-            {/* Variant Image Previews */}
-            {variantImages[index] && variantImages[index].length > 0 && (
-              <div className="grid grid-cols-3 gap-2 mt-4">
-                {variantImages[index].map((image, imgIndex) => (
-                  <div key={image.id} className="relative group">
-                    <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
-                      <img
-                        src={image.url}
-                        alt={`Variant ${index + 1} Image ${imgIndex + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => removeVariantImage(index, image.id)}
-                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <XMarkIcon className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id={`continue-selling-${index}`}
-              checked={variant.continueSelling}
-              onChange={(e) =>
-                handleVariantChange(index, "continueSelling", e.target.checked)
-              }
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-            />
-            <label
-              htmlFor={`continue-selling-${index}`}
-              className="ml-2 text-sm text-gray-700"
+            <div
+              key={index}
+              className="border border-gray-200 rounded-lg p-4 space-y-4"
             >
-              Continue selling when out of stock
-            </label>
-          </div>
-        </div>
-      ))}
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-gray-900">
+                  {variant.size && variant.color
+                    ? `${variant.size} / ${variant.color}`
+                    : `Variant ${index + 1}`}
+                </h4>
+                {formData.variants.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeVariant(index)}
+                    className="text-red-600 hover:text-red-700 text-sm"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
 
-      <Button variant="outline" onClick={addVariant} className="w-full">
-        <PlusIcon className="h-4 w-4 mr-2" />
-        Add variant
-      </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Size"
+                  value={variant.size}
+                  onChange={(e) =>
+                    handleVariantChange(index, "size", e.target.value)
+                  }
+                  placeholder="e.g. S, M, L, XL"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+
+                <Input
+                  label="Color"
+                  value={variant.color}
+                  onChange={(e) =>
+                    handleVariantChange(index, "color", e.target.value)
+                  }
+                  placeholder="e.g. Red, Blue, Black"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="Price"
+                  type="number"
+                  step="0.01"
+                  value={variant.price}
+                  onChange={(e) =>
+                    handleVariantChange(index, "price", e.target.value)
+                  }
+                  placeholder="0.00"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+
+                <Input
+                  label="Compare at Price"
+                  type="number"
+                  step="0.01"
+                  value={variant.compareAtPrice}
+                  onChange={(e) =>
+                    handleVariantChange(index, "compareAtPrice", e.target.value)
+                  }
+                  placeholder="0.00"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+
+                <Input
+                  label="MRP"
+                  type="number"
+                  step="0.01"
+                  value={variant.mrp}
+                  onChange={(e) =>
+                    handleVariantChange(index, "mrp", e.target.value)
+                  }
+                  placeholder="0.00"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+
+                <Input
+                  label="Cost per item"
+                  type="number"
+                  step="0.01"
+                  value={variant.cost}
+                  onChange={(e) =>
+                    handleVariantChange(index, "cost", e.target.value)
+                  }
+                  placeholder="0.00"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="SKU"
+                  value={variant.sku}
+                  onChange={(e) =>
+                    handleVariantChange(index, "sku", e.target.value)
+                  }
+                  placeholder="SKU"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+
+                <Input
+                  label="Barcode"
+                  value={variant.barcode}
+                  onChange={(e) =>
+                    handleVariantChange(index, "barcode", e.target.value)
+                  }
+                  placeholder="Barcode"
+                  className="h-10 px-3 py-2 text-sm rounded-lg"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Variant Images
+                </label>
+                <div className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                  <CameraIcon className="mx-auto h-8 w-8 text-gray-400" />
+                  <p className="mt-2 text-sm text-gray-600">
+                    Drop files here or click to upload
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Supports JPG, PNG, GIF up to 10MB
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => handleVariantImageUpload(index, e)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+
+                {/* Variant Image Previews */}
+                {variantImages[index] && variantImages[index].length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-4">
+                    {variantImages[index].map((image, imgIndex) => (
+                      <div key={image.id} className="relative group">
+                        <div className="aspect-square rounded-lg overflow-hidden border border-gray-200">
+                          <img
+                            src={image.url}
+                            alt={`Variant ${index + 1} Image ${imgIndex + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeVariantImage(index, image.id)}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <XMarkIcon className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id={`continue-selling-${index}`}
+                  checked={variant.continueSelling}
+                  onChange={(e) =>
+                    handleVariantChange(
+                      index,
+                      "continueSelling",
+                      e.target.checked
+                    )
+                  }
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor={`continue-selling-${index}`}
+                  className="ml-2 text-sm text-gray-700"
+                >
+                  Continue selling when out of stock
+                </label>
+              </div>
+            </div>
+          ))}
+
+          <Button variant="outline" onClick={addVariant} className="w-full">
+            <PlusIcon className="h-4 w-4 mr-2" />
+            Add variant
+          </Button>
         </div>
       )}
     </Card.Content>
@@ -653,7 +724,7 @@ const StatusCard = ({ formData, handleInputChange, statusOptions }) => (
         <select
           value={formData.status}
           onChange={(e) => handleInputChange("status", e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+          className="h-10 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -727,12 +798,239 @@ const CreateProduct = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [variantImages, setVariantImages] = useState({});
 
-  // Placeholder categories - you'll replace this with your actual data
+  // Toy subcategories and product types
   const categories = {
-    Electronics: ["Mobile Phones", "Laptops", "Accessories", "Components"],
-    Clothing: ["T-Shirts", "Shirts", "Pants", "Accessories"],
-    "Home & Garden": ["Furniture", "Decor", "Kitchen", "Tools"],
-    Industrial: ["Machinery", "Tools", "Safety Equipment", "Raw Materials"],
+    "Educational Toys": [
+      "Building Blocks",
+      "STEM Kits",
+      "Science Experiment Sets",
+      "Math Learning Toys",
+      "Language Learning Toys",
+      "Geography Toys",
+      "Coding Toys",
+      "Robotics Kits",
+      "Chemistry Sets",
+      "Microscopes",
+      "Telescopes",
+      "Solar System Models",
+      "Anatomy Models",
+      "Puzzle Games",
+      "Brain Teasers",
+      "Memory Games",
+      "Logic Games",
+      "Montessori Toys",
+      "Flashcards",
+      "Interactive Learning Tablets",
+    ],
+    "Action Figures & Collectibles": [
+      "Superhero Figures",
+      "Movie Character Figures",
+      "Anime Figures",
+      "Villains",
+      "Historical Figures",
+      "Fantasy Figures",
+      "SciFi Figures",
+      "Animal Figures",
+      "Dinosaur Figures",
+      "Vehicle Figures",
+      "Collectable Cards",
+      "Trading Cards",
+      "Model Kits",
+      "Die-Cast Models",
+      "Battle Collectibles",
+      "Bobbleheads",
+      "Funko Pop Style Figures",
+      "Poseable Figures",
+      "Limited Edition Figures",
+    ],
+    "Dolls & Accessories": [
+      "Fashion Dolls",
+      "Baby Dolls",
+      "Ethnic Dolls",
+      "Collectible Dolls",
+      "Doll Houses",
+      "Doll Furniture",
+      "Doll Vehicles",
+      "Doll Pets",
+      "Doll Carriages",
+      "Doll Prams",
+      "Doll Clothes",
+      "Doll Shoes",
+      "Building/Lighting Dollhouse Decorations",
+      "Barbie-type Dolls",
+      "American Girl Style Dolls",
+      "Rag Dolls",
+      "Porcelain Dolls",
+    ],
+    "Vehicles & Transportation": [
+      "Die-Cast Cars",
+      "Remote Control Cars",
+      "Toy Trucks",
+      "Construction Vehicles",
+      "Emergency Vehicles",
+      "Motorcycles",
+      "Bicycles",
+      "Trains",
+      "Train Sets",
+      "Airplanes",
+      "Helicopters",
+      "Boats",
+      "Submarines",
+      "Space Vehicles",
+      "Farm Vehicles",
+      "Military Vehicles",
+      "Racing Cars",
+      "Monster Trucks",
+      "Electric Ride-On Cars",
+      "Scooters",
+      "Go-Karts",
+    ],
+    "Building & Construction": [
+      "LEGO Compatible Blocks",
+      "Magnetic Building Sets",
+      "Wooden Blocks",
+      "Foam Blocks",
+      "K'NEX Style Sets",
+      "Architecture Sets",
+      "City Building Sets",
+      "Castle Sets",
+      "Space Building Sets",
+      "Vehicle Building Kits",
+      "Robot Building Kits",
+      "Marble Run Sets",
+      "Gear Building Sets",
+      "Electronic Building Sets",
+      "3D Puzzles",
+      "Snap Circuits",
+      "Engineering Kits",
+    ],
+    "Arts & Crafts": [
+      "Drawing Sets",
+      "Painting Supplies",
+      "Coloring Books",
+      "Crayons",
+      "Markers",
+      "Colored Pencils",
+      "Watercolors",
+      "Acrylic Paints",
+      "Paint Brushes",
+      "Canvas Boards",
+      "Sketch Pads",
+      "Clay Sets",
+      "Modeling Dough",
+      "Polymer Clay",
+      "Craft Kits",
+      "Jewelry Making Kits",
+      "Friendship Bracelet Kits",
+      "Embroidery Kits",
+      "Knitting Sets",
+      "Origami Kits",
+      "Scrapbooking Supplies",
+      "Stickers",
+      "Glue Sticks",
+      "Bead Sets",
+      "Stamp Sets",
+    ],
+    "Outdoor & Sports Toys": [
+      "Bicycles",
+      "Skateboards",
+      "Roller Skates",
+      "Scooters",
+      "Jump Ropes",
+      "Hula Hoops",
+      "Frisbees",
+      "Flying Discs",
+      "Paddle Rackets",
+      "Puppet Sets",
+      "Sports Balls",
+      "Basketball Hoops",
+      "Soccer Balls",
+      "Football",
+      "Baseball Equipment",
+      "Cricket Sets",
+      "Golf Sets",
+      "Archery Sets",
+      "Outdoor Play Tents",
+      "Pool Toys",
+      "Beach Toys",
+      "Sand Toys",
+      "Water Play",
+      "Sidewalk Chalk",
+    ],
+    "Electronic & Interactive Toys": [
+      "Electronic Learning Toys",
+      "Interactive Tablets",
+      "Smart Toys",
+      "Voice Recognition Toys",
+      "Remote Control Toys",
+      "Electronic Games",
+      "Handheld Games",
+      "Talking Toys",
+      "Musical Toys",
+      "Musical Instruments",
+      "Electronic Keyboards",
+      "Karaoke Machines",
+      "Walkie Talkies",
+      "Digital Cameras for Kids",
+      "Smart Watches for Kids",
+    ],
+    "Puzzles & Games": [
+      "Jigsaw Puzzles",
+      "3D Puzzles",
+      "Floor Puzzles",
+      "Board Games",
+      "Card Games",
+      "Strategy Games",
+      "Trivia Games",
+      "Word Games",
+      "Number Games",
+      "Matching Games",
+      "Cooperative Games",
+      "Family Games",
+      "Party Games",
+      "Travel Games",
+      "Classic Games",
+      "Electronic Games",
+      "Brain Teaser Puzzles",
+      "Rubik's Cubes",
+    ],
+    "Plush & Soft Toys": [
+      "Teddy Bears",
+      "Stuffed Animals",
+      "Character Plushies",
+      "Soft Story Toys",
+      "Plush Dolls",
+      "Plush Puppets",
+      "Plush Finger Puppets",
+      "Hand Puppets",
+      "Sock Puppets",
+      "Animal Plush Toys",
+      "Stuffed Animals",
+      "Interactive Plush Toys",
+      "Musical Plush Toys",
+      "Glow-in-the-Dark Plush",
+      "Stuffed Pillows",
+      "Giant Stuffed Animals",
+      "Mini Plushies",
+    ],
+    "Pretend Play": [
+      "Kitchen Playsets",
+      "Doctor Kits",
+      "Tool Sets",
+      "Dress-Up Clothes",
+      "Cleaning Sets",
+      "Cash Registers",
+      "Shopping Carts",
+      "Salon Sets",
+      "Veterinarian Kits",
+      "Fire Fighter Sets",
+      "Police Sets",
+      "Astronaut Costumes",
+      "Princess Costumes",
+      "Superhero Capes",
+      "Puppet Theaters",
+      "Play Tents",
+    ],
   };
 
   const breadcrumbItems = [
@@ -1050,6 +1348,7 @@ const CreateProduct = () => {
           {/* Move ImageUploadArea to sidebar to prevent overflow */}
           <ImageUploadArea
             uploadedImages={uploadedImages}
+            setUploadedImages={setUploadedImages}
             handleMainImageUpload={handleMainImageUpload}
             removeMainImage={removeMainImage}
           />
