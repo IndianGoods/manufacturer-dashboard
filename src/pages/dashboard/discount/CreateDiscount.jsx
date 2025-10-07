@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import Input from "../../components/ui/Input";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import Input from "../../../components/ui/Input";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
 
 // Discount Details Card Component
 const DiscountDetailsCard = ({

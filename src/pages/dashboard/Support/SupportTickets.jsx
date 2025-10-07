@@ -12,12 +12,12 @@ import {
   DocumentTextIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/outline';
-import Breadcrumbs from '../../components/layout/Breadcrumbs';
-import Button from "../../components/ui/Button";
-import Badge from '../../components/ui/Badge';
-import Table from '../../components/ui/Table';
-import Card from '../../components/ui/Card';
-import { mockSupportTickets, supportTicketCategories, supportTicketPriorities, supportTicketStatuses } from '../../data/mockData';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs';
+import Button from "../../../components/ui/Button";
+import Badge from '../../../components/ui/Badge';
+import Table from '../../../components/ui/Table';
+import Card from '../../../components/ui/Card';
+import { mockSupportTickets, supportTicketCategories, supportTicketPriorities, supportTicketStatuses } from '../../../data/mockData';
 
 const SupportTickets = () => {
   const navigate = useNavigate();

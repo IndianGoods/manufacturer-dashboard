@@ -12,26 +12,25 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Home from "./pages/dashboard/Home";
-import Products from "./pages/dashboard/Products";
-import ProductsDemo from "./pages/dashboard/ProductsDemo";
-import CreateProduct from "./pages/dashboard/CreateProduct";
-import EditProduct from "./pages/dashboard/EditProduct";
-import BulkEditProducts from "./pages/dashboard/BulkEditProducts";
-import Orders from "./pages/dashboard/Orders";
-import Inventory from "./pages/dashboard/Inventory";
-import ProductDetail from "./pages/dashboard/ProductDetail";
+import Products from "./pages/dashboard/product/Products";
+import CreateProduct from "./pages/dashboard/product/CreateProduct";
+import EditProduct from "./pages/dashboard/product/EditProduct";
+import BulkEditProducts from "./pages/dashboard/product/BulkEditProducts";
+import Orders from "./pages/dashboard/orders/Orders";
+import Inventory from "./pages/dashboard/inventory/Inventory";
+import ProductDetail from "./pages/dashboard/inventory/ProductDetail";
 import OrderDetailPage from "./pages/dashboard/orders/OrderDetailPage";
-import Discounts from "./pages/dashboard/Discounts";
-import CreateDiscount from "./pages/dashboard/CreateDiscount";
-import AnalyticsDashboard from "./pages/dashboard/AnalyticsDashboard";
-import EditDiscount from "./pages/dashboard/EditDiscount";
+import Discounts from "./pages/dashboard/discount/Discounts";
+import CreateDiscount from "./pages/dashboard/discount/CreateDiscount";
+import AnalyticsDashboard from "./pages/dashboard/analytics/AnalyticsDashboard";
+import EditDiscount from "./pages/dashboard/discount/EditDiscount";
 
 import Settings from './pages/dashboard/settings/Settings'
 // import ChatSupportPage from './pages/dashboard/ChatBot'
-import SupportTickets from './pages/dashboard/SupportTickets'
-import SupportTicketDetail from './pages/dashboard/SupportTicketDetail'
-import CreateSupportTicket from './pages/dashboard/CreateSupportTicket'
-import RFQPage from './pages/dashboard/RFQPage'
+import SupportTickets from './pages/dashboard/Support/SupportTickets'
+import SupportTicketDetail from './pages/dashboard/Support/SupportTicketDetail'
+import CreateSupportTicket from './pages/dashboard/Support/CreateSupportTicket'
+import RFQPage from './pages/dashboard/rfqs/RFQPage'
 import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
 
 

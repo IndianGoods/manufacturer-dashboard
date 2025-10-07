@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { mockProducts } from '../../data/mockData'
-import Card from '../../components/ui/Card'
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
-import Badge from '../../components/ui/Badge'
-import Breadcrumbs from '../../components/layout/Breadcrumbs'
+import { mockProducts } from '../../../data/mockData'
+import Card from '../../../components/ui/Card'
+import Button from '../../../components/ui/Button'
+import Input from '../../../components/ui/Input'
+import Badge from '../../../components/ui/Badge'
+import Breadcrumbs from '../../../components/layout/Breadcrumbs'
 import {
   ArrowLeftIcon,
   CheckCircleIcon,

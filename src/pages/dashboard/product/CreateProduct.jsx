@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { Editor } from "@tinymce/tinymce-react";
 import {
   PhotoIcon as CameraIcon,
@@ -11,11 +11,11 @@ import {
   ChevronDownIcon,
   PhotoIcon,
 } from "@heroicons/react/24/outline";
-import { updateProduct, deleteProduct } from "../../store/slices/productsSlice";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import Card from "../../components/ui/Card";
+import { addProduct } from "../../../store/slices/productsSlice";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
+import Card from "../../../components/ui/Card";
 
 // Sortable grid for images (main image upload area)
 function ImageSortableGrid({ images, setImages, removeImage }) {
@@ -74,9 +74,7 @@ function ImageSortableGrid({ images, setImages, removeImage }) {
               Main
             </span>
           )}
-          <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-white bg-opacity-80 rounded px-1 pointer-events-none">
-            Drag
-          </span>
+          <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-white bg-opacity-80 rounded px-1 pointer-events-none">Drag</span>
         </div>
       ))}
     </div>
@@ -97,10 +95,7 @@ const ImageUploadArea = ({
     <Card.Content>
       <div className="space-y-4">
         {/* Upload Area */}
-        <label
-          htmlFor="file-upload"
-          className="block cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors relative"
-        >
+        <label htmlFor="file-upload" className="block cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors relative">
           <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
           <div className="mt-4">
             <span className="mt-2 block text-sm font-medium text-gray-900">
@@ -256,21 +251,19 @@ const ProductDetailsCard = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tags
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
         <div className="border border-gray-300 rounded-md px-2 py-1 min-h-[32px] focus-within:ring-1 focus-within:ring-primary-500 focus-within:border-primary-500 bg-white">
           <div className="flex flex-wrap gap-1 mb-1">
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
               >
                 {tag}
                 <button
                   type="button"
                   onClick={() => removeTag(tag)}
-                  className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none"
+                  className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full text-primary-400 hover:bg-primary-200 hover:text-primary-500 focus:outline-none"
                 >
                   <XMarkIcon className="w-3 h-3" />
                 </button>
@@ -296,9 +289,7 @@ const ProductDetailsCard = ({
             className="h-8 w-full border-0 outline-none text-sm placeholder-gray-400 px-2 py-1 rounded-md"
           />
         </div>
-        <p className="mt-1 text-xs text-gray-500">
-          Press Enter or comma to add tags
-        </p>
+        <p className="mt-1 text-xs text-gray-400">Press Enter or comma to add tags</p>
       </div>
     </Card.Content>
   </Card>
@@ -442,6 +433,25 @@ const PricingCard = ({
       <h3 className="text-lg font-medium">Pricing</h3>
     </Card.Header>
     <Card.Content className="space-y-4">
+      {/* Variants Toggle - moved to top */}
+      <div>
+        <div className="flex items-center space-x-2 mb-4">
+          <input
+            type="checkbox"
+            id="has-variants"
+            checked={formData.hasVariants}
+            onChange={(e) => handleInputChange("hasVariants", e.target.checked)}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+          />
+          <label
+            htmlFor="has-variants"
+            className="text-sm font-medium text-gray-700"
+          >
+            This product has multiple options, like different sizes or colors
+          </label>
+        </div>
+      </div>
+
       {/* Base Product Pricing (when no variants) */}
       {!formData.hasVariants && (
         <div className="space-y-4">
@@ -486,6 +496,7 @@ const PricingCard = ({
               className="h-10 px-3 py-2 text-sm rounded-lg"
             />
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="Stock Quantity"
@@ -500,25 +511,6 @@ const PricingCard = ({
           </div>
         </div>
       )}
-
-      {/* Variants Toggle - moved to top */}
-      <div>
-        <div className="flex items-center space-x-2 mb-4">
-          <input
-            type="checkbox"
-            id="has-variants"
-            checked={formData.hasVariants}
-            onChange={(e) => handleInputChange("hasVariants", e.target.checked)}
-            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-          />
-          <label
-            htmlFor="has-variants"
-            className="text-sm font-medium text-gray-700"
-          >
-            This product has multiple options, like different sizes or colors
-          </label>
-        </div>
-      </div>
 
       {/* Variants Section */}
       {formData.hasVariants && (
@@ -555,6 +547,7 @@ const PricingCard = ({
                   placeholder="e.g. S, M, L, XL"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
+
                 <Input
                   label="Color"
                   value={variant.color}
@@ -578,6 +571,7 @@ const PricingCard = ({
                   placeholder="0.00"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
+
                 <Input
                   label="Compare at Price"
                   type="number"
@@ -589,6 +583,7 @@ const PricingCard = ({
                   placeholder="0.00"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
+
                 <Input
                   label="MRP"
                   type="number"
@@ -600,6 +595,7 @@ const PricingCard = ({
                   placeholder="0.00"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
+
                 <Input
                   label="Cost per item"
                   type="number"
@@ -623,6 +619,7 @@ const PricingCard = ({
                   placeholder="SKU"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
+
                 <Input
                   label="Barcode"
                   value={variant.barcode}
@@ -632,17 +629,6 @@ const PricingCard = ({
                   placeholder="Barcode"
                   className="h-10 px-3 py-2 text-sm rounded-lg"
                 />
-                <Input
-                  label="Stock Quantity"
-                  type="number"
-                  value={variant.stock}
-                  onChange={(e) =>
-                    handleVariantChange(index, "stock", e.target.value)
-                  }
-                  placeholder="0"
-                  className="h-10 px-3 py-2 text-sm rounded-lg"
-                />
-                <div></div>
               </div>
 
               <div>
@@ -738,7 +724,7 @@ const StatusCard = ({ formData, handleInputChange, statusOptions }) => (
         <select
           value={formData.status}
           onChange={(e) => handleInputChange("status", e.target.value)}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
+          className="h-10 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
         >
           {statusOptions.map((option) => (
             <option key={option.value} value={option.value}>
@@ -754,13 +740,10 @@ const StatusCard = ({ formData, handleInputChange, statusOptions }) => (
   </Card>
 );
 
-const EditProduct = () => {
+const CreateProduct = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { id } = useParams();
-  const { items } = useSelector((state) => state.products);
 
-  const [product, setProduct] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -815,7 +798,7 @@ const EditProduct = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [variantImages, setVariantImages] = useState({});
 
-  // Placeholder categories - you'll replace this with your actual data
+  // Toy subcategories and product types
   const categories = {
     "Educational Toys": [
       "Building Blocks",
@@ -1050,98 +1033,9 @@ const EditProduct = () => {
     ],
   };
 
-  // Load existing product data
-  useEffect(() => {
-    const foundProduct = items.find((p) => p.id.toString() === id);
-    if (foundProduct) {
-      setProduct(foundProduct);
-
-      // Determine if product has variants
-      const hasVariants =
-        foundProduct.variants && foundProduct.variants.length > 0;
-
-      setFormData({
-        title: foundProduct.name || foundProduct.title || "",
-        category: foundProduct.category || "",
-        subCategory: foundProduct.subCategory || "",
-        sku: foundProduct.sku || "",
-        images: foundProduct.images || [],
-        description: foundProduct.description || "",
-        specifications: foundProduct.specifications || {
-          material: "",
-          modelNumber: "",
-          packing: "",
-          moq: "",
-          package: "",
-          singlePackageSize: "",
-          singleGrossWeight: "",
-          recommendedAge: "",
-          gender: "",
-        },
-        tags: foundProduct.tags || "",
-        price: hasVariants ? "" : foundProduct.price?.toString() || "",
-        compareAtPrice: hasVariants
-          ? ""
-          : foundProduct.compareAtPrice?.toString() || "",
-        mrp: hasVariants ? "" : foundProduct.mrp?.toString() || "",
-        cost: hasVariants ? "" : foundProduct.cost?.toString() || "",
-        stock: hasVariants
-          ? ""
-          : foundProduct.inventory?.toString() ||
-            foundProduct.stock?.toString() ||
-            "",
-        hasVariants: hasVariants,
-        variants: hasVariants
-          ? foundProduct.variants
-          : [
-              {
-                size: "",
-                color: "",
-                images: [],
-                price: foundProduct.price?.toString() || "",
-                compareAtPrice: foundProduct.compareAtPrice?.toString() || "",
-                mrp: foundProduct.mrp?.toString() || "",
-                cost: foundProduct.cost?.toString() || "",
-                sku: foundProduct.sku || "",
-                barcode: "",
-                stock:
-                  foundProduct.inventory?.toString() ||
-                  foundProduct.stock?.toString() ||
-                  "",
-                continueSelling: false,
-              },
-            ],
-        seo: foundProduct.seo || {
-          title: "",
-          description: "",
-          url: "",
-        },
-        status: foundProduct.status || "draft",
-      });
-
-      // Set tags if they exist
-      if (foundProduct.tags) {
-        const tagsArray = Array.isArray(foundProduct.tags)
-          ? foundProduct.tags
-          : foundProduct.tags
-              .split(",")
-              .map((tag) => tag.trim())
-              .filter((tag) => tag);
-        setTags(tagsArray);
-      }
-
-      // Set uploaded images
-      if (foundProduct.images && foundProduct.images.length > 0) {
-        setUploadedImages(foundProduct.images);
-      }
-    } else {
-      navigate("/dashboard/products");
-    }
-  }, [id, items, navigate]);
-
   const breadcrumbItems = [
     { name: "Products", href: "/dashboard/products" },
-    { name: product?.name || "Edit product" },
+    { name: "Add product" },
   ];
 
   const statusOptions = [
@@ -1252,6 +1146,16 @@ const EditProduct = () => {
     }
   };
 
+  useEffect(() => {
+    if (formData.tags) {
+      const tagsArray = formData.tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag);
+      setTags(tagsArray);
+    }
+  }, []);
+
   const handleMainImageUpload = (e) => {
     const files = Array.from(e.target.files);
     const newImages = [];
@@ -1347,45 +1251,24 @@ const EditProduct = () => {
 
   const handleSave = (status = "draft") => {
     const productData = {
-      ...product,
       ...formData,
-      id: product.id,
+      id: Date.now(),
       status,
       name: formData.title,
-      category: formData.category,
-      inventory: formData.hasVariants
-        ? formData.variants.reduce(
-            (sum, variant) => sum + (parseInt(variant.stock) || 0),
-            0
-          )
-        : parseInt(formData.stock) || 0,
-      price: formData.hasVariants
-        ? parseFloat(formData.variants[0]?.price || 0)
-        : parseFloat(formData.price || 0),
-      sku: formData.hasVariants
-        ? formData.variants[0]?.sku || ""
-        : formData.sku || "",
+      category: formData.productType,
+      inventory: formData.variants.reduce(
+        (sum, variant) => sum + (parseInt(variant.inventory) || 0),
+        0
+      ),
+      price: parseFloat(formData.variants[0]?.price || 0),
+      sku: formData.variants[0]?.sku || "",
+      createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    dispatch(updateProduct(productData));
+    dispatch(addProduct(productData));
     navigate("/dashboard/products");
   };
-
-  const handleDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete "${product?.name}"? This action cannot be undone.`
-      )
-    ) {
-      dispatch(deleteProduct(product.id));
-      navigate("/dashboard/products");
-    }
-  };
-
-  if (!product) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <>
@@ -1394,15 +1277,8 @@ const EditProduct = () => {
       {/* Header Section */}
       <div className="mb-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900">Edit product</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Add product</h1>
           <div className="flex items-center space-x-3">
-            <Button
-              variant="outline"
-              onClick={handleDelete}
-              className="text-red-600 border-red-300 hover:bg-red-50"
-            >
-              Delete product
-            </Button>
             <Button
               variant="outline"
               onClick={() => navigate("/dashboard/products")}
@@ -1438,10 +1314,18 @@ const EditProduct = () => {
             handleTagKeyPress={handleTagKeyPress}
             tagInputRef={tagInputRef}
           />
+          {/* Test 1: SpecificationsCard - OK */}
           <SpecificationsCard
             formData={formData}
             handleInputChange={handleInputChange}
           />
+          {/* ImageUploadArea causes overflow - temporarily disabled */}
+          {/* <ImageUploadArea
+            uploadedImages={uploadedImages}
+            handleMainImageUpload={handleMainImageUpload}
+            removeMainImage={removeMainImage}
+          /> */}
+          {/* Add back PricingCard - the main functionality */}
           <PricingCard
             formData={formData}
             handleInputChange={handleInputChange}
@@ -1461,6 +1345,7 @@ const EditProduct = () => {
             handleInputChange={handleInputChange}
             statusOptions={statusOptions}
           />
+          {/* Move ImageUploadArea to sidebar to prevent overflow */}
           <ImageUploadArea
             uploadedImages={uploadedImages}
             setUploadedImages={setUploadedImages}
@@ -1473,4 +1358,4 @@ const EditProduct = () => {
   );
 };
 
-export default EditProduct;
+export default CreateProduct;

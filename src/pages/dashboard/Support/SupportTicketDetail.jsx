@@ -13,11 +13,11 @@ import {
   PaperAirplaneIcon,
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Badge from "../../components/ui/Badge";
-import Card from "../../components/ui/Card";
-import { mockSupportTickets } from "../../data/mockData";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Card from "../../../components/ui/Card";
+import { mockSupportTickets } from "../../../data/mockData";
 
 const SupportTicketDetail = () => {
   const { id } = useParams();

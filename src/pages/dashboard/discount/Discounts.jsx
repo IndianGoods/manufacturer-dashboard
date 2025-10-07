@@ -7,15 +7,15 @@ import {
   ChevronDownIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { setDiscounts, setFilters, applyFilters, deleteDiscount } from "../../store/slices/discountsSlice";
-import { mockDiscounts } from "../../data/mockData";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Badge from "../../components/ui/Badge";
-import Table from "../../components/ui/Table";
-import Card from "../../components/ui/Card";
-import Modal from "../../components/ui/Modal";
-import { formatDate } from "../../utils/helpers";
+import { setDiscounts, setFilters, applyFilters, deleteDiscount } from "../../../store/slices/discountsSlice";
+import { mockDiscounts } from "../../../data/mockData";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Table from "../../../components/ui/Table";
+import Card from "../../../components/ui/Card";
+import Modal from "../../../components/ui/Modal";
+import { formatDate } from "../../../utils/helpers";
 
 const Discounts = () => {
   const dispatch = useDispatch();

@@ -16,15 +16,15 @@ import {
   applyFilters,
   deleteRfq,
   updateRfq,
-} from "../../store/slices/rfqsSlice";
-import { mockRfqs } from "../../data/mockData";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Badge from "../../components/ui/Badge";
-import Table from "../../components/ui/Table";
-import Card from "../../components/ui/Card";
-import Modal from "../../components/ui/Modal";
-import { formatCurrency, formatDate } from "../../utils/helpers";
+} from "../../../store/slices/rfqsSlice";
+import { mockRfqs } from "../../../data/mockData";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Table from "../../../components/ui/Table";
+import Card from "../../../components/ui/Card";
+import Modal from "../../../components/ui/Modal";
+import { formatCurrency, formatDate } from "../../../utils/helpers";
 
 const RFQPage = () => {
   const dispatch = useDispatch();

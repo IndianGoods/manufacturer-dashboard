@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import Input from "../../components/ui/Input";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import { updateDiscount } from "../../store/slices/discountsSlice";
+import Button from "../../../components/ui/Button";
+import Card from "../../../components/ui/Card";
+import Input from "../../../components/ui/Input";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import { updateDiscount } from "../../../store/slices/discountsSlice";
 
 // --- Card Components copied from CreateDiscount.jsx ---
 // DiscountDetailsCard, CustomerEligibilityCard, UsageLimitsCard, ActiveDatesCard, DiscountSummaryCard, SalesChannelCard

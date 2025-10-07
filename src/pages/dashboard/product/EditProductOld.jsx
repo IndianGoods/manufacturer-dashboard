@@ -9,14 +9,14 @@ import {
   EyeIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/outline'
-import { updateProduct, deleteProduct } from '../../store/slices/productsSlice'
-import Breadcrumbs from '../../components/layout/Breadcrumbs'
-import Button from '../../components/ui/Button'
-import Input from '../../components/ui/Input'
-import Card from '../../components/ui/Card'
-import Badge from '../../components/ui/Badge'
-import Dropdown from '../../components/ui/Dropdown'
-import Modal from '../../components/ui/Modal'
+import { updateProduct, deleteProduct } from '../../../store/slices/productsSlice'
+import Breadcrumbs from '../../../components/layout/Breadcrumbs'
+import Button from '../../../components/ui/Button'
+import Input from '../../../components/ui/Input'
+import Card from '../../../components/ui/Card'
+import Badge from '../../../components/ui/Badge'
+import Dropdown from '../../../components/ui/Dropdown'
+import Modal from '../../../components/ui/Modal'
 
 const EditProduct = () => {
   const navigate = useNavigate()

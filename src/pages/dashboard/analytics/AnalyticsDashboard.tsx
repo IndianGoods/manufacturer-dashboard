@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Card from "../../components/ui/Card";
+import Card from "../../../components/ui/Card";
 import { Calendar } from "lucide-react";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
 
 interface MetricCardProps {
   title: string;

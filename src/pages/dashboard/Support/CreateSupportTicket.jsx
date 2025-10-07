@@ -7,10 +7,10 @@ import {
   PaperClipIcon,
   ChevronDownIcon,
 } from '@heroicons/react/24/outline';
-import Breadcrumbs from '../../components/layout/Breadcrumbs';
-import Button from "../../components/ui/Button";
-import Card from '../../components/ui/Card';
-import { supportTicketCategories, supportTicketPriorities } from '../../data/mockData';
+import Breadcrumbs from '../../../components/layout/Breadcrumbs';
+import Button from "../../../components/ui/Button";
+import Card from '../../../components/ui/Card';
+import { supportTicketCategories, supportTicketPriorities } from '../../../data/mockData';
 
 const CreateSupportTicket = () => {
   const navigate = useNavigate();

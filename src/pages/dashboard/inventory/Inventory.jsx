@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { mockProducts } from "../../data/mockData";
+import { mockProducts } from "../../../data/mockData";
 import {
   MagnifyingGlassIcon,
   FunnelIcon,
@@ -12,12 +12,12 @@ import {
   XMarkIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import Badge from "../../components/ui/Badge";
-import Table from "../../components/ui/Table";
-import Card from "../../components/ui/Card";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
+import Badge from "../../../components/ui/Badge";
+import Table from "../../../components/ui/Table";
+import Card from "../../../components/ui/Card";
 
 const Inventory = () => {
   const navigate = useNavigate();

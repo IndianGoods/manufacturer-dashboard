@@ -10,14 +10,14 @@ import {
   updateProduct,
   deleteProduct,
   setProducts,
-} from "../../store/slices/productsSlice";
-import { mockProducts } from "../../data/orderMockData";
-import Breadcrumbs from "../../components/layout/Breadcrumbs";
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
-import Card from "../../components/ui/Card";
-import Badge from "../../components/ui/Badge";
-import Modal from "../../components/ui/Modal";
+} from "../../../store/slices/productsSlice";
+import { mockProducts } from "../../../data/orderMockData";
+import Breadcrumbs from "../../../components/layout/Breadcrumbs";
+import Button from "../../../components/ui/Button";
+import Input from "../../../components/ui/Input";
+import Card from "../../../components/ui/Card";
+import Badge from "../../../components/ui/Badge";
+import Modal from "../../../components/ui/Modal";
 
 const BulkEditProducts = () => {
   const navigate = useNavigate();
