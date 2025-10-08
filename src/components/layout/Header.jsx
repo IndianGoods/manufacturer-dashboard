@@ -16,6 +16,8 @@ const Header = ({ onMenuClick }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -65,43 +67,151 @@ const Header = ({ onMenuClick }) => {
           </div>
         </div>
         {/* Right side */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 relative">
           {/* Notifications */}
-          <button className="p-2 text-gray-400 hover:text-gray-300 relative">
+          <button
+            className="p-2 text-gray-400 hover:text-gray-300 relative"
+            onClick={() => {
+              setShowNotifications((prev) => !prev);
+              if (!showNotifications) setShowUserMenu(false);
+            }}
+            aria-label="Show notifications"
+          >
             <BellIcon className="h-6 w-6" />
             <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-400 ring-2 ring-gray-900" />
           </button>
-          {/* User menu */}
-          <Dropdown
-            align="right"
-            trigger={
-              <button className="flex items-center space-x-3 text-sm">
-                <div className="hidden sm:flex sm:flex-col sm:items-end">
-                  <p className="text-sm font-medium text-white">{user?.name}</p>
-                  <p className="text-xs text-gray-300">{user?.email}</p>
-                </div>
-                {user?.avatar ? (
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={user.avatar}
-                    alt={user.name}
-                  />
-                ) : (
-                  <UserCircleIcon className="h-8 w-8 text-gray-400" />
-                )}
-              </button>
-            }
-          >
-            <Dropdown.Item onClick={() => navigate("/dashboard/settings")}>
-              Settings
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => navigate("/dashboard/settings/profile")}
+          {/* Notification Panel */}
+          {showNotifications && (
+            <div
+              className="absolute right-40 top-16 z-50 w-96 bg-white rounded-xl shadow-2xl border border-gray-200"
+              style={{ minWidth: 380 }}
             >
-              Profile
-            </Dropdown.Item>
-            <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
-          </Dropdown>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="font-medium text-base">Alerts</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="text-xs font-medium text-primary-600 hover:underline px-2 py-1 rounded focus:outline-none"
+                    onClick={() => {
+                      /* TODO: implement mark all as read logic */
+                    }}
+                  >
+                    Mark all as read
+                  </button>
+                  <button
+                    className="text-gray-400 hover:text-gray-600"
+                    onClick={() => setShowNotifications(false)}
+                    aria-label="Close notifications"
+                  >
+                    &#10005;
+                  </button>
+                </div>
+              </div>
+              <div className="max-h-96 overflow-y-auto divide-y divide-gray-100">
+                {/* Example notifications, replace with dynamic data */}
+                <div className="px-4 py-3 flex gap-3 items-start">
+                  <span className="mt-1 block h-2 w-2 rounded-full bg-blue-500" />
+                  <div>
+                    <div className="font-medium text-xs text-gray-900">
+                      Point of Sale &bull; Sunday at 11:30 AM
+                    </div>
+                    <div className="font-medium text-sm text-gray-800">
+                      Your free trial of POS Pro has ended
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      Select a POS subscription to continue selling in person.
+                    </div>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex gap-3 items-start">
+                  <span className="mt-1 block h-2 w-2 rounded-full bg-blue-500" />
+                  <div>
+                    <div className="font-medium text-xs text-gray-900">
+                      Point of Sale &bull; Thursday at 4:31 PM
+                    </div>
+                    <div className="font-medium text-sm text-gray-800">
+                      Your free trial of POS Pro ends in 3 days
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      Your account will automatically switch to POS Lite.
+                    </div>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex gap-3 items-start">
+                  <span className="mt-1 block h-2 w-2 rounded-full bg-blue-500" />
+                  <div>
+                    <div className="font-medium text-xs text-gray-900">
+                      Billing &bull; Wednesday at 4:28 PM
+                    </div>
+                    <div className="font-medium text-sm text-gray-800">
+                      Let us know if you’ve registered for a tax number
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      Update your billing settings if you have a tax number for
+                      your business.
+                    </div>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex gap-3 items-start">
+                  <span className="mt-1 block h-2 w-2 rounded-full bg-blue-500" />
+                  <div>
+                    <div className="font-medium text-xs text-gray-900">
+                      Settings &bull; Wednesday at 4:28 PM
+                    </div>
+                    <div className="font-medium text-sm text-gray-800">
+                      Privacy settings are automated
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      Privacy settings are configured and will stay in sync with
+                      the latest recommendations as you set up your store. See
+                      updates in the store activity log.
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="px-4 py-3 text-center text-gray-500 text-xs border-t">
+                No more alerts
+              </div>
+            </div>
+          )}
+          {/* User menu - only one dropdown open at a time */}
+          <div className="relative">
+            <Dropdown
+              align="right"
+              open={showUserMenu}
+              onOpenChange={(open) => {
+                setShowUserMenu(open);
+                if (open) setShowNotifications(false);
+              }}
+              offset={16}
+              trigger={
+                <button
+                  className="flex items-center space-x-3 text-sm"
+                  onClick={() => {
+                    setShowUserMenu((prev) => !prev);
+                    if (!showUserMenu) setShowNotifications(false);
+                  }}
+                >
+                  <div className="hidden sm:flex sm:flex-col sm:items-end">
+                    <p className="text-sm font-medium text-white">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-gray-300">{user?.email}</p>
+                  </div>
+                  {user?.avatar ? (
+                    <img
+                      className="h-8 w-8 rounded-full"
+                      src={user.avatar}
+                      alt={user.name}
+                    />
+                  ) : (
+                    <UserCircleIcon className="h-8 w-8 text-gray-400" />
+                  )}
+                </button>
+              }
+            >
+              <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
+            </Dropdown>
+          </div>
         </div>
       </div>
     </header>
