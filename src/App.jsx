@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -25,17 +24,23 @@ import CreateDiscount from "./pages/dashboard/discount/CreateDiscount";
 import AnalyticsDashboard from "./pages/dashboard/analytics/AnalyticsDashboard";
 import EditDiscount from "./pages/dashboard/discount/EditDiscount";
 
-import Settings from './pages/dashboard/settings/Settings'
+import Settings from "./pages/dashboard/settings/Settings";
 // import ChatSupportPage from './pages/dashboard/ChatBot'
-import SupportTickets from './pages/dashboard/Support/SupportTickets'
-import SupportTicketDetail from './pages/dashboard/Support/SupportTicketDetail'
-import CreateSupportTicket from './pages/dashboard/Support/CreateSupportTicket'
-import RFQPage from './pages/dashboard/rfqs/RFQPage'
-import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
-import Samples from './pages/dashboard/sample/Sample'
-import SampleDetailPage from './pages/dashboard/sample/SampleDetailPage'
+import SupportTickets from "./pages/dashboard/Support/SupportTickets";
+import SupportTicketDetail from "./pages/dashboard/Support/SupportTicketDetail";
+import CreateSupportTicket from "./pages/dashboard/Support/CreateSupportTicket";
+import RFQPage from "./pages/dashboard/rfqs/RFQPage";
+import RFQDetailPage from "./pages/dashboard/rfqs/RFQDetailPage";
+import Samples from "./pages/dashboard/sample/Sample";
+import SampleDetailPage from "./pages/dashboard/sample/SampleDetailPage";
 
-
+import SupportTickets from "./pages/dashboard/Support/SupportTickets";
+import SupportTicketDetail from "./pages/dashboard/Support/SupportTicketDetail";
+import CreateSupportTicket from "./pages/dashboard/Support/CreateSupportTicket";
+import RFQPage from "./pages/dashboard/rfqs/RFQPage";
+import RFQDetailPage from "./pages/dashboard/rfqs/RFQDetailPage";
+import RfqHome from "./pages/dashboard/rfqs-v2/RfqHome";
+import RfqChat from "./pages/dashboard/rfqs-v2/RfqChat";
 
 function App() {
   return (
@@ -68,22 +73,19 @@ function App() {
             <Route path="samples" element={<Samples />} />
             <Route path="samples/:id" element={<SampleDetailPage />} />
 
-            
             <Route path="discounts" element={<Discounts />} />
             <Route path="discounts/new" element={<CreateDiscount />} />
             <Route path="discounts/:id/edit" element={<EditDiscount />} />
             <Route path="analytics" element={<AnalyticsDashboard />} />
-            
 
-            <Route path="rfqs" element={<RFQPage />} />
-            <Route path="rfqs/:id" element={<RFQDetailPage />} />
-            
+            <Route path="rfqs" element={<RfqHome />} />
+            <Route path="rfqs/:id" element={<RfqChat />} />
+
             {/* <Route path="support" element={<ChatSupportPage />} /> */}
             <Route path="support" element={<SupportTickets />} />
             <Route path="support/create" element={<CreateSupportTicket />} />
             <Route path="support/:id" element={<SupportTicketDetail />} />
             <Route path="settings" element={<Settings />} />
-
           </Route>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>

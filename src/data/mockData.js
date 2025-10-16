@@ -514,6 +514,18 @@ export const mockRfqs = [
     notes: 'Looking for volume discount pricing',
     createdAt: '2024-09-20T09:15:00Z',
     updatedAt: '2024-09-22T11:30:00Z',
+    responses: [
+      {
+        sender: 'John Martinez',
+        role: 'customer',
+        timestamp: '2024-09-20T09:15:00Z',
+        message: 'We are interested in bulk ordering headphones and smartwatches for our corporate wellness program. Looking for competitive pricing for 50 headphones and 25 smartwatches. We need delivery by October 15th.',
+        attachments: ['requirements_spec.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'pending', timestamp: '2024-09-20T09:15:00Z' }
+    ]
   },
   {
     id: 'rfq-2',
@@ -538,6 +550,26 @@ export const mockRfqs = [
     notes: 'Need samples before final order',
     createdAt: '2024-09-18T14:20:00Z',
     updatedAt: '2024-09-24T16:45:00Z',
+    responses: [
+      {
+        sender: 'Emily Carter',
+        role: 'customer',
+        timestamp: '2024-09-18T14:20:00Z',
+        message: 'We need 200 organic cotton t-shirts with custom printing. Please provide pricing and sample availability.',
+        attachments: ['design_mockup.pdf']
+      },
+      {
+        sender: 'Sales Team',
+        role: 'manufacturer',
+        timestamp: '2024-09-24T16:45:00Z',
+        message: 'Thank you for your inquiry. We can provide the t-shirts at $22.50 per unit for 200 pieces, totaling $4,500. Samples will be ready in 3 days. Please review the attached quotation.',
+        attachments: ['quotation_rfq002.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'pending', timestamp: '2024-09-18T14:20:00Z' },
+      { status: 'quoted', timestamp: '2024-09-24T16:45:00Z' }
+    ]
   },
   {
     id: 'rfq-3',
@@ -562,6 +594,34 @@ export const mockRfqs = [
     notes: 'Urgent requirement for production line',
     createdAt: '2024-09-10T08:00:00Z',
     updatedAt: '2024-09-25T16:00:00Z',
+    responses: [
+      {
+        sender: 'Robert Kim',
+        role: 'customer',
+        timestamp: '2024-09-10T08:00:00Z',
+        message: 'Urgent requirement for 10 professional camera lenses for our industrial inspection systems. Need delivery by November 15th.',
+        attachments: ['technical_specs.pdf']
+      },
+      {
+        sender: 'Sales Team',
+        role: 'manufacturer',
+        timestamp: '2024-09-12T10:30:00Z',
+        message: 'We can fulfill your order. Price: $899.90 per lens. Total: $8,999. Lead time: 4 weeks. Please review attached quotation.',
+        attachments: ['quotation_rfq003.pdf']
+      },
+      {
+        sender: 'Robert Kim',
+        role: 'customer',
+        timestamp: '2024-09-25T16:00:00Z',
+        message: 'Quotation accepted. Please proceed with the order. PO attached.',
+        attachments: ['purchase_order_003.pdf']
+      }
+    ],
+    statusHistory: [
+      { status: 'pending', timestamp: '2024-09-10T08:00:00Z' },
+      { status: 'quoted', timestamp: '2024-09-12T10:30:00Z' },
+      { status: 'accepted', timestamp: '2024-09-25T16:00:00Z' }
+    ]
   },
   {
     id: 'rfq-4',
@@ -572,7 +632,7 @@ export const mockRfqs = [
       phone: '+1 (555) 789-0123',
       company: 'Retail Chain LLC',
     },
-    status: 'accepted',
+    status: 'rejected',
     priority: 'low',
     products: [
       {
@@ -586,6 +646,34 @@ export const mockRfqs = [
     notes: 'Seasonal stock requirement',
     createdAt: '2024-09-01T12:00:00Z',
     updatedAt: '2024-09-30T23:59:59Z',
+    responses: [
+      {
+        sender: 'Lisa Wang',
+        role: 'customer',
+        timestamp: '2024-09-01T12:00:00Z',
+        message: 'Need 500 organic cotton t-shirts in multiple colors for seasonal stock. Budget: $25 per unit.',
+        attachments: []
+      },
+      {
+        sender: 'Sales Team',
+        role: 'manufacturer',
+        timestamp: '2024-09-05T14:20:00Z',
+        message: 'Thank you for your inquiry. Our price for 500 units is $29.99 per piece. Total: $14,995. Unfortunately, we cannot meet your budget requirement of $25 per unit.',
+        attachments: ['quotation_rfq004.pdf']
+      },
+      {
+        sender: 'Lisa Wang',
+        role: 'customer',
+        timestamp: '2024-09-30T23:59:59Z',
+        message: 'Thank you, but we will look for alternative suppliers that can meet our budget.',
+        attachments: []
+      }
+    ],
+    statusHistory: [
+      { status: 'pending', timestamp: '2024-09-01T12:00:00Z' },
+      { status: 'quoted', timestamp: '2024-09-05T14:20:00Z' },
+      { status: 'rejected', timestamp: '2024-09-30T23:59:59Z' }
+    ]
   },
   {
     id: 'rfq-5',
@@ -610,6 +698,18 @@ export const mockRfqs = [
     notes: 'Looking for competitive pricing',
     createdAt: '2024-09-28T14:30:00Z',
     updatedAt: '2024-09-28T14:30:00Z',
+    responses: [
+      {
+        sender: 'David Chen',
+        role: 'customer',
+        timestamp: '2024-09-28T14:30:00Z',
+        message: 'We are looking to purchase 100 smartwatches for our employee gift program. Please provide your best pricing. Delivery needed by end of November.',
+        attachments: []
+      }
+    ],
+    statusHistory: [
+      { status: 'pending', timestamp: '2024-09-28T14:30:00Z' }
+    ]
   },
 ]
 
