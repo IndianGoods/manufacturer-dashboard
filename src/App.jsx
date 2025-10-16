@@ -26,11 +26,7 @@ import EditDiscount from "./pages/dashboard/discount/EditDiscount";
 
 import Settings from "./pages/dashboard/settings/Settings";
 // import ChatSupportPage from './pages/dashboard/ChatBot'
-import SupportTickets from "./pages/dashboard/Support/SupportTickets";
-import SupportTicketDetail from "./pages/dashboard/Support/SupportTicketDetail";
-import CreateSupportTicket from "./pages/dashboard/Support/CreateSupportTicket";
-import RFQPage from "./pages/dashboard/rfqs/RFQPage";
-import RFQDetailPage from "./pages/dashboard/rfqs/RFQDetailPage";
+
 import Samples from "./pages/dashboard/sample/Sample";
 import SampleDetailPage from "./pages/dashboard/sample/SampleDetailPage";
 
