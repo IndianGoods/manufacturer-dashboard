@@ -13,6 +13,7 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   ArchiveBoxIcon,
+  BeakerIcon,
 } from "@heroicons/react/24/outline";
 import { logout } from "../../store/slices/authSlice";
 import { cn } from "../../utils/helpers";
@@ -34,6 +35,7 @@ const navigationItems = [
     href: "/dashboard/orders",
     icon: ClipboardDocumentListIcon,
   },
+  { name: "Sample Orders", href: "/dashboard/samples", icon: BeakerIcon },
   { name: "RFQs", href: "/dashboard/rfqs", icon: DocumentTextIcon },
   { name: "Discounts", href: "/dashboard/discounts", icon: TagIcon },
   { name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },

@@ -32,6 +32,8 @@ import SupportTicketDetail from './pages/dashboard/Support/SupportTicketDetail'
 import CreateSupportTicket from './pages/dashboard/Support/CreateSupportTicket'
 import RFQPage from './pages/dashboard/rfqs/RFQPage'
 import RFQDetailPage from './pages/dashboard/rfqs/RFQDetailPage'
+import Samples from './pages/dashboard/sample/Sample'
+import SampleDetailPage from './pages/dashboard/sample/SampleDetailPage'
 
 
 
@@ -62,6 +64,9 @@ function App() {
             <Route path="inventory" element={<Inventory />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:id" element={<OrderDetailPage />} />
+
+            <Route path="samples" element={<Samples />} />
+            <Route path="samples/:id" element={<SampleDetailPage />} />
 
             
             <Route path="discounts" element={<Discounts />} />
