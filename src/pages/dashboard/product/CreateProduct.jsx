@@ -74,7 +74,9 @@ function ImageSortableGrid({ images, setImages, removeImage }) {
               Main
             </span>
           )}
-          <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-white bg-opacity-80 rounded px-1 pointer-events-none">Drag</span>
+          <span className="absolute bottom-2 right-2 text-xs text-gray-400 bg-white bg-opacity-80 rounded px-1 pointer-events-none">
+            Drag
+          </span>
         </div>
       ))}
     </div>
@@ -95,7 +97,10 @@ const ImageUploadArea = ({
     <Card.Content>
       <div className="space-y-4">
         {/* Upload Area */}
-        <label htmlFor="file-upload" className="block cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors relative">
+        <label
+          htmlFor="file-upload"
+          className="block cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors relative"
+        >
           <PhotoIcon className="mx-auto h-12 w-12 text-gray-400" />
           <div className="mt-4">
             <span className="mt-2 block text-sm font-medium text-gray-900">
@@ -251,7 +256,9 @@ const ProductDetailsCard = ({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Tags
+        </label>
         <div className="border border-gray-300 rounded-md px-2 py-1 min-h-[32px] focus-within:ring-1 focus-within:ring-primary-500 focus-within:border-primary-500 bg-white">
           <div className="flex flex-wrap gap-1 mb-1">
             {tags.map((tag, index) => (
@@ -289,7 +296,9 @@ const ProductDetailsCard = ({
             className="h-8 w-full border-0 outline-none text-sm placeholder-gray-400 px-2 py-1 rounded-md"
           />
         </div>
-        <p className="mt-1 text-xs text-gray-400">Press Enter or comma to add tags</p>
+        <p className="mt-1 text-xs text-gray-400">
+          Press Enter or comma to add tags
+        </p>
       </div>
     </Card.Content>
   </Card>
@@ -323,12 +332,12 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
         />
 
         <Input
-          label="Packing"
-          value={formData.specifications.packing}
+          label="Items Included"
+          value={formData.specifications.itemsIncluded}
           onChange={(e) =>
-            handleInputChange("packing", e.target.value, "specifications")
+            handleInputChange("itemsIncluded", e.target.value, "specifications")
           }
-          placeholder="Packing details"
+          placeholder="e.g., 1x Car, 1x Remote, 1x Charger"
           className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
@@ -344,12 +353,41 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
         />
 
         <Input
-          label="Package"
-          value={formData.specifications.package}
+          label="Units per Carton"
+          type="number"
+          value={formData.specifications.unitsPerCarton}
           onChange={(e) =>
-            handleInputChange("package", e.target.value, "specifications")
+            handleInputChange(
+              "unitsPerCarton",
+              e.target.value,
+              "specifications"
+            )
           }
-          placeholder="Package type"
+          placeholder="Number of units per carton"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
+        />
+
+        <Input
+          label="Carton Dimensions"
+          value={formData.specifications.cartonDimensions}
+          onChange={(e) =>
+            handleInputChange(
+              "cartonDimensions",
+              e.target.value,
+              "specifications"
+            )
+          }
+          placeholder="e.g. 50x30x20 cm"
+          className="h-10 px-3 py-2 text-sm rounded-lg"
+        />
+
+        <Input
+          label="Carton Weight"
+          value={formData.specifications.cartonWeight}
+          onChange={(e) =>
+            handleInputChange("cartonWeight", e.target.value, "specifications")
+          }
+          placeholder="e.g. 5 kg"
           className="h-10 px-3 py-2 text-sm rounded-lg"
         />
 
@@ -414,6 +452,82 @@ const SpecificationsCard = ({ formData, handleInputChange }) => (
           </select>
         </div>
       </div>
+
+      {/* Battery Requirement - Full width section */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Battery Requirement
+        </label>
+        <div className="space-y-3">
+          <div className="flex items-center space-x-4">
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="batteryRequired"
+                value="no"
+                checked={formData.specifications.batteryRequired === "no"}
+                onChange={(e) =>
+                  handleInputChange(
+                    "batteryRequired",
+                    e.target.value,
+                    "specifications"
+                  )
+                }
+                className="form-radio h-4 w-4 text-primary-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">No</span>
+            </label>
+            <label className="inline-flex items-center">
+              <input
+                type="radio"
+                name="batteryRequired"
+                value="yes"
+                checked={formData.specifications.batteryRequired === "yes"}
+                onChange={(e) =>
+                  handleInputChange(
+                    "batteryRequired",
+                    e.target.value,
+                    "specifications"
+                  )
+                }
+                className="form-radio h-4 w-4 text-primary-600"
+              />
+              <span className="ml-2 text-sm text-gray-700">Yes</span>
+            </label>
+          </div>
+          {formData.specifications.batteryRequired === "yes" && (
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Battery Type"
+                value={formData.specifications.batteryType}
+                onChange={(e) =>
+                  handleInputChange(
+                    "batteryType",
+                    e.target.value,
+                    "specifications"
+                  )
+                }
+                placeholder="e.g. AA, AAA, 9V"
+                className="h-10 px-3 py-2 text-sm rounded-lg"
+              />
+              <Input
+                label="Number of Batteries"
+                type="number"
+                value={formData.specifications.batteryCount}
+                onChange={(e) =>
+                  handleInputChange(
+                    "batteryCount",
+                    e.target.value,
+                    "specifications"
+                  )
+                }
+                placeholder="e.g. 2, 4"
+                className="h-10 px-3 py-2 text-sm rounded-lg"
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </Card.Content>
   </Card>
 );
@@ -433,6 +547,212 @@ const PricingCard = ({
       <h3 className="text-lg font-medium">Pricing</h3>
     </Card.Header>
     <Card.Content className="space-y-4">
+      {/* Price Tiers Section */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            Price Tiers <span className="text-red-500">*</span>
+          </label>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const newTiers = [
+                ...(formData.priceTiers || []),
+                { minQuantity: "", maxQuantity: "", price: "" },
+              ];
+              handleInputChange("priceTiers", newTiers);
+            }}
+          >
+            <PlusIcon className="h-4 w-4 mr-1" />
+            Add Tier
+          </Button>
+        </div>
+        <div className="space-y-2">
+          {/* All tiers in consistent 4-column layout */}
+          {(formData.priceTiers || []).map((tier, index) => {
+            // Ensure we have at least 2 tiers
+            const isRequired = index < 2;
+            const actualTier = tier || {
+              minQuantity: "",
+              maxQuantity: "",
+              price: "",
+            };
+
+            return (
+              <div key={index} className="grid grid-cols-4 gap-2 items-end">
+                <Input
+                  label={index === 0 ? "Min Qty" : ""}
+                  type="number"
+                  value={actualTier.minQuantity}
+                  onChange={(e) => {
+                    const newTiers = [...(formData.priceTiers || [])];
+                    while (newTiers.length <= index) {
+                      newTiers.push({
+                        minQuantity: "",
+                        maxQuantity: "",
+                        price: "",
+                      });
+                    }
+                    newTiers[index].minQuantity = e.target.value;
+                    handleInputChange("priceTiers", newTiers);
+                  }}
+                  placeholder="Min"
+                  required={isRequired}
+                  className="h-9 px-2 py-1 text-sm rounded-md"
+                />
+                <Input
+                  label={index === 0 ? "Max Qty" : ""}
+                  type="number"
+                  value={actualTier.maxQuantity}
+                  onChange={(e) => {
+                    const newTiers = [...(formData.priceTiers || [])];
+                    while (newTiers.length <= index) {
+                      newTiers.push({
+                        minQuantity: "",
+                        maxQuantity: "",
+                        price: "",
+                      });
+                    }
+                    newTiers[index].maxQuantity = e.target.value;
+                    handleInputChange("priceTiers", newTiers);
+                  }}
+                  placeholder="Max"
+                  required={isRequired}
+                  className="h-9 px-2 py-1 text-sm rounded-md"
+                />
+                <Input
+                  label={index === 0 ? "Price" : ""}
+                  type="number"
+                  step="0.01"
+                  value={actualTier.price}
+                  onChange={(e) => {
+                    const newTiers = [...(formData.priceTiers || [])];
+                    while (newTiers.length <= index) {
+                      newTiers.push({
+                        minQuantity: "",
+                        maxQuantity: "",
+                        price: "",
+                      });
+                    }
+                    newTiers[index].price = e.target.value;
+                    handleInputChange("priceTiers", newTiers);
+                  }}
+                  placeholder="0.00"
+                  required={isRequired}
+                  className="h-9 px-2 py-1 text-sm rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newTiers = formData.priceTiers.filter(
+                      (_, i) => i !== index
+                    );
+                    handleInputChange("priceTiers", newTiers);
+                  }}
+                  disabled={isRequired}
+                  className={`h-9 px-2 text-sm border rounded-md ${
+                    isRequired
+                      ? "text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed"
+                      : "text-red-600 hover:text-red-700 border-red-300 hover:bg-red-50"
+                  }`}
+                >
+                  {isRequired ? "Required" : "Remove"}
+                </button>
+              </div>
+            );
+          })}
+
+          {/* Add empty rows if we have less than 2 tiers */}
+          {(!formData.priceTiers || formData.priceTiers.length < 2) &&
+            Array.from(
+              { length: 2 - (formData.priceTiers?.length || 0) },
+              (_, i) => {
+                const index = (formData.priceTiers?.length || 0) + i;
+                return (
+                  <div
+                    key={`empty-${index}`}
+                    className="grid grid-cols-4 gap-2 items-end"
+                  >
+                    <Input
+                      label={index === 0 ? "Min Qty" : ""}
+                      type="number"
+                      value=""
+                      onChange={(e) => {
+                        const newTiers = [...(formData.priceTiers || [])];
+                        while (newTiers.length <= index) {
+                          newTiers.push({
+                            minQuantity: "",
+                            maxQuantity: "",
+                            price: "",
+                          });
+                        }
+                        newTiers[index].minQuantity = e.target.value;
+                        handleInputChange("priceTiers", newTiers);
+                      }}
+                      placeholder="Min"
+                      required
+                      className="h-9 px-2 py-1 text-sm rounded-md"
+                    />
+                    <Input
+                      label={index === 0 ? "Max Qty" : ""}
+                      type="number"
+                      value=""
+                      onChange={(e) => {
+                        const newTiers = [...(formData.priceTiers || [])];
+                        while (newTiers.length <= index) {
+                          newTiers.push({
+                            minQuantity: "",
+                            maxQuantity: "",
+                            price: "",
+                          });
+                        }
+                        newTiers[index].maxQuantity = e.target.value;
+                        handleInputChange("priceTiers", newTiers);
+                      }}
+                      placeholder="Max"
+                      required
+                      className="h-9 px-2 py-1 text-sm rounded-md"
+                    />
+                    <Input
+                      label={index === 0 ? "Price" : ""}
+                      type="number"
+                      step="0.01"
+                      value=""
+                      onChange={(e) => {
+                        const newTiers = [...(formData.priceTiers || [])];
+                        while (newTiers.length <= index) {
+                          newTiers.push({
+                            minQuantity: "",
+                            maxQuantity: "",
+                            price: "",
+                          });
+                        }
+                        newTiers[index].price = e.target.value;
+                        handleInputChange("priceTiers", newTiers);
+                      }}
+                      placeholder="0.00"
+                      required
+                      className="h-9 px-2 py-1 text-sm rounded-md"
+                    />
+                    <button
+                      type="button"
+                      disabled
+                      className="h-9 px-2 text-gray-400 border border-gray-200 bg-gray-50 cursor-not-allowed text-sm rounded-md"
+                    >
+                      Required
+                    </button>
+                  </div>
+                );
+              }
+            )}
+        </div>
+        <p className="text-xs text-gray-500 mt-2">
+          First 2 price tiers are required. Additional tiers are optional.
+        </p>
+      </div>
+
       {/* Variants Toggle - moved to top */}
       <div>
         <div className="flex items-center space-x-2 mb-4">
@@ -448,6 +768,7 @@ const PricingCard = ({
             className="text-sm font-medium text-gray-700"
           >
             This product has multiple options, like different sizes or colors
+            (Variants)
           </label>
         </div>
       </div>
@@ -754,12 +1075,17 @@ const CreateProduct = () => {
     specifications: {
       material: "",
       modelNumber: "",
-      packing: "",
+      itemsIncluded: "",
       moq: "",
-      package: "",
+      unitsPerCarton: "",
+      cartonDimensions: "",
+      cartonWeight: "",
       singlePackageSize: "",
       singleGrossWeight: "",
       recommendedAge: "",
+      batteryRequired: "no",
+      batteryType: "",
+      batteryCount: "",
       gender: "",
     },
     tags: "",
@@ -768,6 +1094,10 @@ const CreateProduct = () => {
     mrp: "",
     cost: "",
     stock: "",
+    priceTiers: [
+      { minQuantity: "", maxQuantity: "", price: "" },
+      { minQuantity: "", maxQuantity: "", price: "" },
+    ],
     hasVariants: false,
     variants: [
       {
